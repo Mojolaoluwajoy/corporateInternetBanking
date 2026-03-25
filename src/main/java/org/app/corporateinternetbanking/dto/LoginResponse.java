@@ -3,8 +3,8 @@ package org.app.corporateinternetbanking.dto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.app.corporateinternetbanking.userManagement.User;
-import org.app.corporateinternetbanking.userManagement.enums.Role;
+import org.app.corporateinternetbanking.user.model.User;
+import org.app.corporateinternetbanking.user.enums.Role;
 
 @Setter
 @Getter

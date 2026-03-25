@@ -1,12 +1,12 @@
 package org.app.corporateinternetbanking.globalExceptionHandler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.app.corporateinternetbanking.accountManagement.AccountDoesNotExist;
+import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
 import org.app.corporateinternetbanking.dto.GenericResponse;
-import org.app.corporateinternetbanking.organizationManagement.OrganizationDoesNotExist;
-import org.app.corporateinternetbanking.transactionManagement.exceptions.*;
-import org.app.corporateinternetbanking.userManagement.exceptions.NotAnAdminException;
-import org.app.corporateinternetbanking.userManagement.exceptions.UserAlreadyRegistered;
+import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;
+import org.app.corporateinternetbanking.transaction.exceptions.*;
+import org.app.corporateinternetbanking.user.exceptions.NotAnAdminException;
+import org.app.corporateinternetbanking.user.exceptions.UserAlreadyRegistered;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

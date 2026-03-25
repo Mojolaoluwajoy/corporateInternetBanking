@@ -2,8 +2,8 @@ package org.app.corporateinternetbanking.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.app.corporateinternetbanking.userManagement.UserRepository;
-import org.app.corporateinternetbanking.userManagement.User;
+import org.app.corporateinternetbanking.user.repository.UserRepository;
+import org.app.corporateinternetbanking.user.model.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

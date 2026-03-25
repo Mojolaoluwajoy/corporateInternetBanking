@@ -1,9 +1,9 @@
 package org.app.corporateinternetbanking.security;
 
 import lombok.Getter;
-import org.app.corporateinternetbanking.userManagement.enums.Role;
-import org.app.corporateinternetbanking.userManagement.enums.Status;
-import org.app.corporateinternetbanking.userManagement.User;
+import org.app.corporateinternetbanking.user.enums.Role;
+import org.app.corporateinternetbanking.user.enums.Status;
+import org.app.corporateinternetbanking.user.model.User;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
