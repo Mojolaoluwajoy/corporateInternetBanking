@@ -90,6 +90,11 @@ public class GlobalExceptionHandler {
     log.error("Currency not found: {}",exception.getMessage());
     return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
 }
+@ExceptionHandler(NoPendingTransactionFound.class)
+    public ResponseEntity<GenericResponse> handleNoPendingTransactionFound(NoPendingTransactionFound exception){
+    log.error("No pending Transaction(s): {}",exception.getMessage());
+    return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
+}
 
 
 

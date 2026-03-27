@@ -6,12 +6,13 @@ import org.app.corporateinternetbanking.account.model.Account;
 import org.app.corporateinternetbanking.account.repository.AccountRepository;
 import org.app.corporateinternetbanking.transaction.dto.ApprovalRequest;
 import org.app.corporateinternetbanking.transaction.dto.ApprovalResponse;
-import org.app.corporateinternetbanking.transaction.dto.TransactiontRequest;
 import org.app.corporateinternetbanking.transaction.dto.TransactionResponse;
+import org.app.corporateinternetbanking.transaction.dto.TransactiontRequest;
 import org.app.corporateinternetbanking.transaction.enums.TransactionStatus;
 import org.app.corporateinternetbanking.transaction.exceptions.*;
 import org.app.corporateinternetbanking.transaction.model.Transaction;
 import org.app.corporateinternetbanking.transaction.repository.TransactionRepository;
+import org.app.corporateinternetbanking.transaction.utils.TransactionMap;
 import org.app.corporateinternetbanking.user.enums.UserRole;
 import org.app.corporateinternetbanking.user.exceptions.UnauthorizedAccess;
 import org.app.corporateinternetbanking.user.model.User;
@@ -20,9 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
-import static org.app.corporateinternetbanking.transaction.utils.TransactionMap.*;
-import static org.app.corporateinternetbanking.transaction.utils.ApprovalMap.*;
+import static org.app.corporateinternetbanking.transaction.utils.ApprovalMap.mapApprovalRequest;
+import static org.app.corporateinternetbanking.transaction.utils.ApprovalMap.mapApprovalResponse;
+import static org.app.corporateinternetbanking.transaction.utils.TransactionMap.mapRequest;
+import static org.app.corporateinternetbanking.transaction.utils.TransactionMap.mapResponse;
 @Service
 public class TransactionServiceImpl implements TransactionService {
    @Autowired
@@ -61,7 +65,7 @@ if (!user.getRole().equals(UserRole.MAKER)){
 
     @Override
     public ApprovalResponse approval(ApprovalRequest request) throws TransactionAlreadyProcessed, TransactionDoesNotExist, InvalidStatus, UnsupportedTransactionType, UserNotFound, UnauthorizedAccess, InvalidAmount, AccountDoesNotExist {
-        Transaction transaction = transactionRepository.findById(request.getTransactionId())
+          Transaction transaction = transactionRepository.findById(request.getTransactionId())
                 .orElseThrow(() -> new TransactionDoesNotExist("This transaction does not exist"));
         if(transaction.getAmount().compareTo(java.math.BigDecimal.ZERO)<0){
             transaction.setStatus(TransactionStatus.REJECTED);
@@ -115,4 +119,18 @@ if (!user.getRole().equals(UserRole.APPROVER)){
         }
         throw new UnsupportedTransactionType("Unsupported transaction type");
     }
+
+    @Override
+    public List<TransactionResponse> viewPendingTransactions() throws NoPendingTransactionFound {
+
+        List <Transaction> transactions=transactionRepository.findByStatus(TransactionStatus.PENDING);
+        if (transactions.isEmpty()) {
+            throw new NoPendingTransactionFound("There's no pending transaction");
+        }
+              return transactions
+                      .stream()
+                      .map(TransactionMap::mapResponse)
+                      .toList();
+    }
+
 }
