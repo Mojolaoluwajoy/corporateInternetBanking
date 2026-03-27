@@ -2,10 +2,14 @@ package org.app.corporateinternetbanking.globalExceptionHandler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
+import org.app.corporateinternetbanking.account.exception.UserNotFound;
+import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
 import org.app.corporateinternetbanking.dto.GenericResponse;
+import org.app.corporateinternetbanking.organization.exceptions.OrganizationAlreadyProcessed;
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;
 import org.app.corporateinternetbanking.transaction.exceptions.*;
-import org.app.corporateinternetbanking.user.exceptions.NotAnAdminException;
+import org.app.corporateinternetbanking.user.exceptions.NotASuperAdminException;
+import org.app.corporateinternetbanking.user.exceptions.TokenExpiredOrInvalid;
 import org.app.corporateinternetbanking.user.exceptions.UserAlreadyRegistered;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +26,9 @@ public class GlobalExceptionHandler {
     log.error("Error registering user: {}",registered.getMessage());
     return new ResponseEntity<>(GenericResponse.failed(registered.getMessage()), HttpStatus.BAD_REQUEST);
 }
-@ExceptionHandler(NotAnAdminException.class)
-    public ResponseEntity<GenericResponse> handleNotAnAdminException(NotAnAdminException exception){
-    log.error("Not an admin: {}",exception.getMessage());
+@ExceptionHandler(NotASuperAdminException.class)
+    public ResponseEntity<GenericResponse> handleNotAnAdminException(NotASuperAdminException exception){
+    log.error("Not a super admin: {}",exception.getMessage());
     return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
 }
 @ExceptionHandler(AccountDoesNotExist.class)
@@ -66,6 +70,27 @@ public class GlobalExceptionHandler {
     log.error("Unsupported transaction type: {}",exception.getMessage());
     return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
 }
+@ExceptionHandler(UserNotFound.class)
+    public ResponseEntity<GenericResponse> handleUserNotFound(UserNotFound exception){
+    log.error("user not found: {}",exception.getMessage());
+    return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
+}
+@ExceptionHandler(TokenExpiredOrInvalid.class)
+    public ResponseEntity<GenericResponse> handleTokenExpiredOrInvalid(TokenExpiredOrInvalid exception){
+    log.error("Invalid token: {}",exception.getMessage());
+    return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
+}
+@ExceptionHandler(OrganizationAlreadyProcessed.class)
+    public ResponseEntity<GenericResponse> handleOrganizationAlreadyProcessed (OrganizationAlreadyProcessed exception){
+    log.error("This organization has been processed: {}",exception.getMessage());
+    return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
+}
+@ExceptionHandler(CurrencyNotFound.class)
+    public ResponseEntity<GenericResponse> handleCurrencyNotFound (CurrencyNotFound exception){
+    log.error("Currency not found: {}",exception.getMessage());
+    return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
+}
+
 
 
 }

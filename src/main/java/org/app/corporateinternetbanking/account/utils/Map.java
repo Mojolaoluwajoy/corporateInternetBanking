@@ -3,6 +3,8 @@ package org.app.corporateinternetbanking.account.utils;
 import org.app.corporateinternetbanking.account.dto.AccountRequest;
 import org.app.corporateinternetbanking.account.dto.AccountResponse;
 import org.app.corporateinternetbanking.account.model.Account;
+import org.app.corporateinternetbanking.organization.dto.OrganizationId;
+import org.app.corporateinternetbanking.user.dto.UserIdDto;
 
 import java.security.SecureRandom;
 
@@ -25,12 +27,9 @@ public class Map {
         AccountResponse response=new AccountResponse();
         response.setName(account.getName());
         response.setName(account.getType());
-//        OrganizationId organizationId =new OrganizationId();
-//       organizationId.setId(account.getOrganization().getId());
-//       response.setOrganizationId(organizationId);
-//     response.setOrganizationId(new OrganizationId(account.getOrganization().getId()));
+  response.setOrganizationId(new OrganizationId(account.getOrganization().getId()));
    response.setAccountNumber(account.getAccountNumber());
-        response.setCreatedBy(account.getCreatedBy());
+        response.setCreatedBy(new UserIdDto(account.getCreatedBy().getId()));
         response.setCreatedAt(account.getCreatedAt());
         return response;
     }

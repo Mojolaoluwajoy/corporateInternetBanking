@@ -1,13 +1,19 @@
 package org.app.corporateinternetbanking.account.service;
 
+import lombok.AllArgsConstructor;
 import org.app.corporateinternetbanking.account.dto.AccountRequest;
 import org.app.corporateinternetbanking.account.dto.AccountResponse;
 import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
+import org.app.corporateinternetbanking.account.exception.UserNotFound;
 import org.app.corporateinternetbanking.account.model.Account;
 import org.app.corporateinternetbanking.account.repository.AccountRepository;
-import org.app.corporateinternetbanking.organization.model.Organization;
+import org.app.corporateinternetbanking.email.EmailSenderService;
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;
+import org.app.corporateinternetbanking.organization.model.Organization;
 import org.app.corporateinternetbanking.organization.repository.OrganizationRepository;
+import org.app.corporateinternetbanking.user.dto.UserIdDto;
+import org.app.corporateinternetbanking.user.model.User;
+import org.app.corporateinternetbanking.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -18,19 +24,28 @@ import static org.app.corporateinternetbanking.account.utils.Map.requestMap;
 import static org.app.corporateinternetbanking.account.utils.Map.responseMap;
 
 @org.springframework.stereotype.Service
+@AllArgsConstructor
 public class AccountServiceImpl implements AccountService {
     @Autowired
     AccountRepository repository;
-@Autowired
-OrganizationRepository organizationRepository;
+    @Autowired
+    private EmailSenderService senderService;
+    @Autowired
+    OrganizationRepository organizationRepository;
+    private final UserRepository userRepository;
+
 
     @Override
-    public AccountResponse createAccount(AccountRequest request) throws OrganizationDoesNotExist {
-        Account account=requestMap(request);
+    public AccountResponse createAccount(AccountRequest request) throws OrganizationDoesNotExist, UserNotFound {
+        Account account = requestMap(request);
 
-        Organization organization= organizationRepository.findById(request.getOrganization())
-                .orElseThrow(()-> new OrganizationDoesNotExist("Organization not found"));
+        Organization organization = organizationRepository.findById(request.getOrganization())
+                .orElseThrow(() -> new OrganizationDoesNotExist("Organization not found"));
+        User user = userRepository.findById(request.getCreatedBy())
+                .orElseThrow(() -> new UserNotFound("The user with the specified id does not exist"));
         account.setOrganization(organization);
+        account.setCreatedBy(user);
+
 Account savedAccount=repository.save(account);
 return responseMap(savedAccount);
     }
@@ -45,7 +60,7 @@ return responseMap(savedAccount);
             response.setBalance(savedAccount.getBalance());
             response.setAccountNumber(savedAccount.getAccountNumber());
             response.setType(savedAccount.getType());
-            response.setCreatedBy(savedAccount.getCreatedBy());
+            response.setCreatedBy(new UserIdDto(savedAccount.getCreatedBy().getId()));
             response.setCreatedAt(savedAccount.getCreatedAt());
         }
         return accountList;
@@ -60,5 +75,4 @@ return responseMap(savedAccount);
       return responseMap(account.get());
 
     }
-
-}
+    }

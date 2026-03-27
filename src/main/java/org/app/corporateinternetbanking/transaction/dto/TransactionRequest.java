@@ -11,5 +11,7 @@ public class TransactionRequest {
     private String accountNumber;
     private BigDecimal amount;
     private TransactionType type;
+    private String transactionReference;
+
 
 }

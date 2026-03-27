@@ -16,5 +16,5 @@ public class TransactionResponse {
     private TransactionType type;
     private TransactionStatus status;
     private Account account;
-
+private String transactionReference;
 }

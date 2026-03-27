@@ -27,5 +27,7 @@ public class Transaction {
    @JoinColumn(name = "accountI_id")
    private Account account;
    private LocalDateTime localDateTime=LocalDateTime.now();
+   @Column(unique = true)
+   private String transactionReference;
    private BigDecimal updatedBalance=BigDecimal.ZERO;
 }

@@ -70,4 +70,27 @@ public class JwtService {
 
 
     }
+    public String generateEmailToken(String email){
+        Map<String,Object> claims=new HashMap<>();
+        claims.put("type","EMAIL_VERIFICATION");
+
+        return Jwts.builder()
+                .claims(claims)
+                .subject(email)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis()+10*60*1000))
+                .signWith(getSecretKey())
+                .compact();
+    }
+    public boolean isEmailTokenValid(String token){
+        var claims=extractAllClaims(token);
+
+        if (!"EMAIL_VERIFICATION".equals(claims.get("type"))){
+            return false;
+        }
+        return !isTokenExpired(claims);
+    }
+    public String extractEmailFromToken(String token){
+        return extractAllClaims(token).getSubject();
+    }
 }

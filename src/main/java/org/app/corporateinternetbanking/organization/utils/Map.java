@@ -1,25 +1,65 @@
 package org.app.corporateinternetbanking.organization.utils;
 
+import org.app.corporateinternetbanking.organization.dto.OrganizationId;
+import org.app.corporateinternetbanking.organization.dto.OrganizationOnlyResponse;
 import org.app.corporateinternetbanking.organization.dto.OrganizationRequest;
-import org.app.corporateinternetbanking.organization.dto.OrganizationResponse;
+import org.app.corporateinternetbanking.organization.dto.OrganizationRegistrationResponse;
 import org.app.corporateinternetbanking.organization.model.Organization;
+import org.app.corporateinternetbanking.user.model.User;
+
+import java.util.UUID;
 
 public class Map {
-    public static Organization mapRequest(OrganizationRequest request){
-        Organization organization=new Organization();
+    public static Organization mapRequest(OrganizationRequest request) {
+        Organization organization = new Organization();
 
         organization.setName(request.getName());
         organization.setRegistrationNumber(request.getRegistrationNumber());
 
         return organization;
     }
-    public static OrganizationResponse mapResponse(Organization organization){
-        OrganizationResponse response=new OrganizationResponse();
+
+    public static OrganizationRegistrationResponse mapRegistrationResponse(Organization organization, User user) {
+        OrganizationRegistrationResponse response = new OrganizationRegistrationResponse();
 
         response.setId(organization.getId());
         response.setName(organization.getName());
         response.setRegistrationNumber(organization.getRegistrationNumber());
+        response.setOrganizationStatus(organization.getOrganizationStatus());
 
+        response.setUserId(user.getUserId());
+        response.setFirstName(user.getFirstName());
+        response.setLastName(user.getLastName());
+        response.setEmail(user.getEmail());
+        response.setNin(user.getNin());
+        response.setRole(user.getRole());
+        response.setStatus(user.getStatus());
+        response.setOrganizationId(new OrganizationId(user.getOrganization().getId()));
         return response;
+
+    }
+
+    public static User mapAdminRequest(OrganizationRequest registrationRequest) {
+        User user = new User();
+        user.setUserId(UUID.randomUUID().toString());
+        user.setFirstName(registrationRequest.getFirstName());
+        user.setLastName(registrationRequest.getLastName());
+        user.setEmail(registrationRequest.getEmail());
+        user.setNin(registrationRequest.getNin());
+        user.setPassword(registrationRequest.getPassword());
+        // user.setOrganization(registrationRequest.getOrganizationId());
+        user.setRole(registrationRequest.getRole());
+        return user;
+    }
+
+    public static OrganizationOnlyResponse mapResponse(Organization organization) {
+        OrganizationOnlyResponse response = new OrganizationOnlyResponse();
+
+        response.setId(organization.getId());
+        response.setName(organization.getName());
+        response.setRegistrationNumber(organization.getRegistrationNumber());
+        response.setOrganizationStatus(organization.getOrganizationStatus());
+        return response;
+
     }
 }

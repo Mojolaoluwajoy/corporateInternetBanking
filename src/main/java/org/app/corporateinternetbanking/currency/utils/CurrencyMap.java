@@ -1,0 +1,25 @@
+package org.app.corporateinternetbanking.currency.utils;
+
+import org.app.corporateinternetbanking.currency.dto.CurrencyRequest;
+import org.app.corporateinternetbanking.currency.dto.CurrencyResponse;
+import org.app.corporateinternetbanking.currency.model.Currency;
+
+public class CurrencyMap {
+
+    public static Currency mapCurrencyRequest(CurrencyRequest currencyRequest){
+        Currency currency=new Currency();
+        currency.setCode(currencyRequest.getCode());
+        currency.setStatus(currencyRequest.getStatus());
+        return currency;
+    }
+
+    public static CurrencyResponse mapCurrencyResponse(Currency currency){
+        CurrencyResponse currencyResponse=new CurrencyResponse();
+
+        currencyResponse.setCode(currency.getCode());
+        currencyResponse.setName(currency.getName());
+        currencyResponse.setSymbol(currency.getSymbol());
+        currencyResponse.setStatus(currency.getStatus());
+        return currencyResponse;
+    }
+}

@@ -1,11 +1,11 @@
 package org.app.corporateinternetbanking.user.controller;
 
 import org.app.corporateinternetbanking.dto.GenericResponse;
-import org.app.corporateinternetbanking.user.service.UserService;
-import org.app.corporateinternetbanking.user.dto.UserRegistrationRequest;
+import org.app.corporateinternetbanking.user.dto.InvitationRequest;
 import org.app.corporateinternetbanking.user.dto.UserResponse;
-import org.app.corporateinternetbanking.user.exceptions.NotAnAdminException;
+import org.app.corporateinternetbanking.user.exceptions.NotASuperAdminException;
 import org.app.corporateinternetbanking.user.exceptions.UserAlreadyRegistered;
+import org.app.corporateinternetbanking.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +18,14 @@ import java.util.List;
 public class UserController {
     @Autowired
     UserService service;
-    @PostMapping("/create")
-    public ResponseEntity<GenericResponse> createUser(@RequestBody UserRegistrationRequest request)throws UserAlreadyRegistered, NotAnAdminException {
-        UserResponse response=service.createUser(request);
-        return new ResponseEntity<>(GenericResponse.success(response,"user registration successful"), HttpStatus.CREATED);
+
+    @PostMapping("/invitation")
+    public ResponseEntity<GenericResponse> sendInvitation(@RequestBody InvitationRequest  request)throws UserAlreadyRegistered, NotASuperAdminException {
+      String email=  service.sendInvitationTokenToUser(request);
+        return new ResponseEntity<>(GenericResponse.success(email,"token successfully sent"), HttpStatus.CREATED);
 
     }
+
     @GetMapping("/viewAll")
     public ResponseEntity<GenericResponse> viewAlUsers(){
         List<UserResponse> users=service.ViewAllUsers();

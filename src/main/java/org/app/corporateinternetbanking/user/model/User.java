@@ -7,7 +7,7 @@ import lombok.Setter;
 import org.app.corporateinternetbanking.account.model.Account;
 import org.app.corporateinternetbanking.organization.model.Organization;
 import org.app.corporateinternetbanking.user.enums.Role;
-import org.app.corporateinternetbanking.user.enums.Status;
+import org.app.corporateinternetbanking.user.enums.UserStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,9 +29,8 @@ public class User {
      @Enumerated(EnumType.STRING)
     private Role role;
     @Enumerated(EnumType.STRING)
-    private Status status;
-    private String adminKey;
-    @ManyToOne
+    private UserStatus status= UserStatus.INACTIVE;
+      @ManyToOne
     @JoinColumn(name = "organization_id")
     private Organization organization;
     @OneToMany  (mappedBy = "createdBy")

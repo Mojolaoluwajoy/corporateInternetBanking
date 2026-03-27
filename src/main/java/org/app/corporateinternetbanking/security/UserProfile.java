@@ -2,7 +2,7 @@ package org.app.corporateinternetbanking.security;
 
 import lombok.Getter;
 import org.app.corporateinternetbanking.user.enums.Role;
-import org.app.corporateinternetbanking.user.enums.Status;
+import org.app.corporateinternetbanking.user.enums.UserStatus;
 import org.app.corporateinternetbanking.user.model.User;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,7 +22,7 @@ public class UserProfile implements UserDetails {
       private String email;
       private Role role;
       private LocalDateTime createdAt;
-      private Status status;
+      private UserStatus status;
     @Override
     public boolean isAccountNonExpired() {
         return true; }
@@ -37,7 +37,7 @@ public class UserProfile implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return status== Status.ACTIVE;
+        return status== UserStatus.ACTIVE;
     }
 
     @Override

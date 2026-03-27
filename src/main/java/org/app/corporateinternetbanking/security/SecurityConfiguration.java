@@ -27,13 +27,14 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity )throws Exception{
-        String[] publicEndPoints=new String[]{"/auth/**","/user/register","/organization/create"};
+        String[] publicEndPoints=new String[]{"/auth/**","/user/register","/organizations/create"};
         httpSecurity.csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(auth ->auth
                 .requestMatchers(publicEndPoints)
                         .permitAll()
-                         .requestMatchers("/users/create/").hasRole("ADMIN")
+                         .requestMatchers("/users/invitation/").hasRole("ADMIN")
                         .requestMatchers("/organizations/findBy","/organization/viewAll").hasRole("SUPERADMIN")
+                        .requestMatchers("/organizations/approve/").hasRole("SUPER_ADMIN")
                         .requestMatchers("/accounts/create/").hasRole("ADMIN")
                         .requestMatchers("/transactions/initiate").hasAnyRole("MAKER")
                         .requestMatchers("/transactions/approve").hasAnyRole("APPROVER")

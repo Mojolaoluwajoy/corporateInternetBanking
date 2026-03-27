@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.app.corporateinternetbanking.account.model.Account;
+import org.app.corporateinternetbanking.organization.enums.OrganizationStatus;
 import org.app.corporateinternetbanking.user.model.User;
 
 import java.util.List;
@@ -22,5 +23,7 @@ public class Organization {
     private List<Account> accounts;
     @OneToMany(mappedBy = "organization")
     private List<User> users;
+    @Enumerated(EnumType.STRING)
+    private OrganizationStatus organizationStatus=OrganizationStatus.PENDING;
 
 }

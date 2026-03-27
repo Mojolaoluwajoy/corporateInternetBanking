@@ -14,6 +14,7 @@ public class Map {
         transaction.setAccountNumber(request.getAccountNumber());
         transaction.setAmount(request.getAmount());
         transaction.setType(request.getType());
+        transaction.setTransactionReference(request.getTransactionReference());
 
         return transaction;
     }
@@ -39,6 +40,7 @@ public class Map {
         response.setType(transaction.getType());
        response.setStatus(transaction.getStatus());
        response.setAccount(transaction.getAccount());
+       response.setTransactionReference(transaction.getTransactionReference());
        return response;
     }
 }

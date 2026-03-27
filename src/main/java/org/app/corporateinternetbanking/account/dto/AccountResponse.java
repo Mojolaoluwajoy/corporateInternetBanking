@@ -3,7 +3,7 @@ package org.app.corporateinternetbanking.account.dto;
 import lombok.Getter;
 import lombok.Setter;
 import org.app.corporateinternetbanking.organization.dto.OrganizationId;
-import org.app.corporateinternetbanking.user.model.User;
+import org.app.corporateinternetbanking.user.dto.UserIdDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,7 +16,7 @@ public class AccountResponse {
      private BigDecimal balance;
      private String type;
      private OrganizationId organizationId;
-     private User createdBy;
+     private UserIdDto createdBy;
     private LocalDateTime createdAt=LocalDateTime.now();
 
 
