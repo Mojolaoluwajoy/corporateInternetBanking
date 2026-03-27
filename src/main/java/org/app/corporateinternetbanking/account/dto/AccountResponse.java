@@ -2,6 +2,7 @@ package org.app.corporateinternetbanking.account.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.app.corporateinternetbanking.currency.dto.CurrencyCodeDto;
 import org.app.corporateinternetbanking.organization.dto.OrganizationId;
 import org.app.corporateinternetbanking.user.dto.UserIdDto;
 
@@ -16,6 +17,7 @@ public class AccountResponse {
      private BigDecimal balance;
      private String type;
      private OrganizationId organizationId;
+     private CurrencyCodeDto currencyCode;
      private UserIdDto createdBy;
     private LocalDateTime createdAt=LocalDateTime.now();
 

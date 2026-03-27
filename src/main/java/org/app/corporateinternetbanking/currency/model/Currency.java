@@ -1,9 +1,12 @@
 package org.app.corporateinternetbanking.currency.model;
 
-import org.app.corporateinternetbanking.currency.enums.CurrencyStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.app.corporateinternetbanking.account.model.Account;
+import org.app.corporateinternetbanking.currency.enums.CurrencyStatus;
+
+import java.util.List;
 
 @Entity
 @Setter
@@ -17,6 +20,8 @@ public class Currency {
     @Column(unique = true)
     private String code;
     private String symbol;
+    @OneToMany(mappedBy = "currency")
+    private List<Account> accounts;
     @Enumerated (EnumType.STRING)
-    private CurrencyStatus status=CurrencyStatus.INACTIVE;
+     private CurrencyStatus status=CurrencyStatus.INACTIVE;
 }

@@ -3,6 +3,7 @@ package org.app.corporateinternetbanking.account.utils;
 import org.app.corporateinternetbanking.account.dto.AccountRequest;
 import org.app.corporateinternetbanking.account.dto.AccountResponse;
 import org.app.corporateinternetbanking.account.model.Account;
+import org.app.corporateinternetbanking.currency.dto.CurrencyCodeDto;
 import org.app.corporateinternetbanking.organization.dto.OrganizationId;
 import org.app.corporateinternetbanking.user.dto.UserIdDto;
 
@@ -27,6 +28,7 @@ public class Map {
         AccountResponse response=new AccountResponse();
         response.setName(account.getName());
         response.setName(account.getType());
+        response.setCurrencyCode(new CurrencyCodeDto(account.getCurrency().getCode()));
   response.setOrganizationId(new OrganizationId(account.getOrganization().getId()));
    response.setAccountNumber(account.getAccountNumber());
         response.setCreatedBy(new UserIdDto(account.getCreatedBy().getId()));

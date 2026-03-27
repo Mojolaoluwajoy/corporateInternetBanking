@@ -7,6 +7,9 @@ import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
 import org.app.corporateinternetbanking.account.exception.UserNotFound;
 import org.app.corporateinternetbanking.account.model.Account;
 import org.app.corporateinternetbanking.account.repository.AccountRepository;
+import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
+import org.app.corporateinternetbanking.currency.model.Currency;
+import org.app.corporateinternetbanking.currency.repository.CurrencyRepository;
 import org.app.corporateinternetbanking.email.EmailSenderService;
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;
 import org.app.corporateinternetbanking.organization.model.Organization;
@@ -32,13 +35,16 @@ public class AccountServiceImpl implements AccountService {
     private EmailSenderService senderService;
     @Autowired
     OrganizationRepository organizationRepository;
+    @Autowired
+    CurrencyRepository currencyRepository;
     private final UserRepository userRepository;
 
 
     @Override
-    public AccountResponse createAccount(AccountRequest request) throws OrganizationDoesNotExist, UserNotFound {
+    public AccountResponse createAccount(AccountRequest request) throws OrganizationDoesNotExist, UserNotFound, CurrencyNotFound {
         Account account = requestMap(request);
-
+        Currency currency=currencyRepository.findByCode(request.getCurrencyCode())
+                .orElseThrow(()-> new CurrencyNotFound("This currency does not exist"));
         Organization organization = organizationRepository.findById(request.getOrganization())
                 .orElseThrow(() -> new OrganizationDoesNotExist("Organization not found"));
         User user = userRepository.findById(request.getCreatedBy())

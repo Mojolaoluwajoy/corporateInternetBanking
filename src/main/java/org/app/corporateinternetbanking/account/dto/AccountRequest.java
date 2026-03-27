@@ -10,4 +10,5 @@ public class AccountRequest {
     private String type;
     private Long createdBy;
     private Long organization;
+    private String currencyCode;
 }
