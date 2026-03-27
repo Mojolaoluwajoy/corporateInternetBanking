@@ -36,8 +36,9 @@ public class SecurityConfiguration {
                         .requestMatchers("/organizations/findBy","/organization/viewAll").hasRole("SUPERADMIN")
                         .requestMatchers("/organizations/approve/").hasRole("SUPER_ADMIN")
                         .requestMatchers("/accounts/create/").hasRole("ADMIN")
-                        .requestMatchers("/transactions/initiate").hasAnyRole("MAKER")
-                        .requestMatchers("/transactions/approve").hasAnyRole("APPROVER")
+                        .requestMatchers("/transactions/initiate").hasRole("MAKER")
+                        .requestMatchers("/transactions/approve").hasRole("APPROVER")
+                       .requestMatchers("/currencies/**").hasRole("SUPER_ADMIN")
                         .anyRequest().authenticated() ).sessionManagement(session ->session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                         .authenticationProvider(authenticationProvider())
