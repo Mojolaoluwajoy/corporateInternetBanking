@@ -18,5 +18,5 @@ public class Currency {
     private String code;
     private String symbol;
     @Enumerated (EnumType.STRING)
-    private CurrencyStatus status;
+    private CurrencyStatus status=CurrencyStatus.INACTIVE;
 }
