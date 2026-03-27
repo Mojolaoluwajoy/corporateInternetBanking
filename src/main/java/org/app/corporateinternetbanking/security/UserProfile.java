@@ -1,7 +1,7 @@
 package org.app.corporateinternetbanking.security;
 
 import lombok.Getter;
-import org.app.corporateinternetbanking.user.enums.Role;
+import org.app.corporateinternetbanking.user.enums.UserRole;
 import org.app.corporateinternetbanking.user.enums.UserStatus;
 import org.app.corporateinternetbanking.user.model.User;
 import org.jspecify.annotations.Nullable;
@@ -20,7 +20,7 @@ public class UserProfile implements UserDetails {
       private String nin;
       private String password;
       private String email;
-      private Role role;
+      private UserRole role;
       private LocalDateTime createdAt;
       private UserStatus status;
     @Override

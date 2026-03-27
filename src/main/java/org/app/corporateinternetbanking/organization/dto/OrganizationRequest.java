@@ -2,7 +2,7 @@ package org.app.corporateinternetbanking.organization.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.app.corporateinternetbanking.user.enums.Role;
+import org.app.corporateinternetbanking.user.enums.UserRole;
 
 @Setter
 @Getter
@@ -18,7 +18,7 @@ public class OrganizationRequest {
     private String nin;
     //private String adminKey;
    // private Long organizationId;
-    private Role role;
+    private UserRole role;
 
 
 }

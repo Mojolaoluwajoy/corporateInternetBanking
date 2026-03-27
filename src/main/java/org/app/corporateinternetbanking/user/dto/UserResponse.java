@@ -3,7 +3,7 @@ package org.app.corporateinternetbanking.user.dto;
 import lombok.Getter;
 import lombok.Setter;
 import org.app.corporateinternetbanking.organization.dto.OrganizationId;
-import org.app.corporateinternetbanking.user.enums.Role;
+import org.app.corporateinternetbanking.user.enums.UserRole;
 import org.app.corporateinternetbanking.user.enums.UserStatus;
 
 @Setter
@@ -15,7 +15,7 @@ public class UserResponse {
     private String email;
     private String nin;
     private OrganizationId organizationId;
-    private Role role;
+    private UserRole role;
     private UserStatus status;
 
 }

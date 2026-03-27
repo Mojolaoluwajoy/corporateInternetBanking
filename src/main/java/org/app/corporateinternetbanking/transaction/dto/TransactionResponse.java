@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.app.corporateinternetbanking.account.model.Account;
 import org.app.corporateinternetbanking.transaction.enums.TransactionStatus;
 import org.app.corporateinternetbanking.transaction.enums.TransactionType;
+import org.app.corporateinternetbanking.user.dto.UserIdDto;
 
 import java.math.BigDecimal;
 @Setter
@@ -17,4 +18,5 @@ public class TransactionResponse {
     private TransactionStatus status;
     private Account account;
 private String transactionReference;
+private UserIdDto creator;
 }

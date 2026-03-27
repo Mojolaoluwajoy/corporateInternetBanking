@@ -2,7 +2,7 @@ package org.app.corporateinternetbanking.user.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.app.corporateinternetbanking.user.enums.Role;
+import org.app.corporateinternetbanking.user.enums.UserRole;
 import org.app.corporateinternetbanking.user.enums.UserStatus;
 @Setter
 @Getter
@@ -12,7 +12,7 @@ private String userId;
     private String lastName;
     private String email;
     private String nin;
-    private Role role;
+    private UserRole role;
     private UserStatus status;
 
 }

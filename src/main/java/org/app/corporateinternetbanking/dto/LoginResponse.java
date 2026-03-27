@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.app.corporateinternetbanking.user.model.User;
-import org.app.corporateinternetbanking.user.enums.Role;
+import org.app.corporateinternetbanking.user.enums.UserRole;
 
 @Setter
 @Getter
@@ -12,7 +12,7 @@ import org.app.corporateinternetbanking.user.enums.Role;
 public class LoginResponse {
     private String token;
     private String email;
-    private Role role;
+    private UserRole role;
     private String firstName;
     private String lastName;
 

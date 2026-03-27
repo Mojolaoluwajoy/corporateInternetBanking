@@ -12,6 +12,6 @@ public class TransactionRequest {
     private BigDecimal amount;
     private TransactionType type;
     private String transactionReference;
-
+private Long creatorId;
 
 }

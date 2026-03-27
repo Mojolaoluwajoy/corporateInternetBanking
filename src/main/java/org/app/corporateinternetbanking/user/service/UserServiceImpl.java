@@ -8,9 +8,9 @@ import org.app.corporateinternetbanking.organization.model.Organization;
 import org.app.corporateinternetbanking.organization.repository.OrganizationRepository;
 import org.app.corporateinternetbanking.security.JwtService;
 import org.app.corporateinternetbanking.user.dto.*;
-import org.app.corporateinternetbanking.user.enums.Role;
+import org.app.corporateinternetbanking.user.enums.UserRole;
 import org.app.corporateinternetbanking.user.enums.UserStatus;
-import org.app.corporateinternetbanking.user.exceptions.NotASuperAdminException;
+import org.app.corporateinternetbanking.user.exceptions.UnauthorizedAccess;
 import org.app.corporateinternetbanking.user.exceptions.TokenExpiredOrInvalid;
 import org.app.corporateinternetbanking.user.exceptions.UserAlreadyRegistered;
 import org.app.corporateinternetbanking.user.model.User;
@@ -41,9 +41,9 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public SuperAdminResponse registerSuperAdmin(SuperAdminRegistrationRequest request) throws NotASuperAdminException, UserAlreadyRegistered {
-       if (!request.getRole() .equals(Role.SUPER_ADMIN)) {
-           throw new NotASuperAdminException("Role must be super admin");
+    public SuperAdminResponse registerSuperAdmin(SuperAdminRegistrationRequest request) throws UnauthorizedAccess, UserAlreadyRegistered {
+       if (!request.getRole() .equals(UserRole.SUPER_ADMIN)) {
+           throw new UnauthorizedAccess("Role must be super admin");
        }
       Optional <User> userId =repository.findByEmail(request.getEmail());
         if (userId.isPresent()) {

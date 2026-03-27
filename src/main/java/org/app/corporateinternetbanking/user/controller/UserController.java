@@ -3,7 +3,7 @@ package org.app.corporateinternetbanking.user.controller;
 import org.app.corporateinternetbanking.dto.GenericResponse;
 import org.app.corporateinternetbanking.user.dto.InvitationRequest;
 import org.app.corporateinternetbanking.user.dto.UserResponse;
-import org.app.corporateinternetbanking.user.exceptions.NotASuperAdminException;
+import org.app.corporateinternetbanking.user.exceptions.UnauthorizedAccess;
 import org.app.corporateinternetbanking.user.exceptions.UserAlreadyRegistered;
 import org.app.corporateinternetbanking.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class UserController {
     UserService service;
 
     @PostMapping("/invitation")
-    public ResponseEntity<GenericResponse> sendInvitation(@RequestBody InvitationRequest  request)throws UserAlreadyRegistered, NotASuperAdminException {
+    public ResponseEntity<GenericResponse> sendInvitation(@RequestBody InvitationRequest  request)throws UserAlreadyRegistered, UnauthorizedAccess {
       String email=  service.sendInvitationTokenToUser(request);
         return new ResponseEntity<>(GenericResponse.success(email,"token successfully sent"), HttpStatus.CREATED);
 

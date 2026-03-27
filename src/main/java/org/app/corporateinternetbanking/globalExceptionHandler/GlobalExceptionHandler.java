@@ -8,7 +8,7 @@ import org.app.corporateinternetbanking.dto.GenericResponse;
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationAlreadyProcessed;
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;
 import org.app.corporateinternetbanking.transaction.exceptions.*;
-import org.app.corporateinternetbanking.user.exceptions.NotASuperAdminException;
+import org.app.corporateinternetbanking.user.exceptions.UnauthorizedAccess;
 import org.app.corporateinternetbanking.user.exceptions.TokenExpiredOrInvalid;
 import org.app.corporateinternetbanking.user.exceptions.UserAlreadyRegistered;
 import org.springframework.http.HttpStatus;
@@ -26,8 +26,8 @@ public class GlobalExceptionHandler {
     log.error("Error registering user: {}",registered.getMessage());
     return new ResponseEntity<>(GenericResponse.failed(registered.getMessage()), HttpStatus.BAD_REQUEST);
 }
-@ExceptionHandler(NotASuperAdminException.class)
-    public ResponseEntity<GenericResponse> handleNotAnAdminException(NotASuperAdminException exception){
+@ExceptionHandler(UnauthorizedAccess.class)
+    public ResponseEntity<GenericResponse> handleNotAnAdminException(UnauthorizedAccess exception){
     log.error("Not a super admin: {}",exception.getMessage());
     return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
 }
