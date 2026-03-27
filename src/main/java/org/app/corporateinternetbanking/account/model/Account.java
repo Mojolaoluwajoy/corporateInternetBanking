@@ -20,13 +20,14 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @Column
-            (unique = true)
+    @Column(unique = true)
     private String accountNumber;
     private BigDecimal balance=BigDecimal.ZERO;
     private String type;
-    @OneToMany(mappedBy = "account")
-    private List<Transaction> transactions;
+    @OneToMany(mappedBy = "sourceAccount")
+    private List<Transaction> sourceTransactions;
+   @OneToMany(mappedBy = "destinationAccount")
+    private List<Transaction> destinationTransactions;
     @ManyToOne
     @JoinColumn(name ="currency" )
     private Currency currency;

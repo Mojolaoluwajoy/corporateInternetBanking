@@ -7,8 +7,9 @@ import org.app.corporateinternetbanking.transaction.enums.TransactionType;
 import java.math.BigDecimal;
 @Setter
 @Getter
-public class TransactionRequest {
-    private String accountNumber;
+public class TransactiontRequest {
+    private String sourceAccount;
+    private String destinationAccount;
     private BigDecimal amount;
     private TransactionType type;
     private String transactionReference;

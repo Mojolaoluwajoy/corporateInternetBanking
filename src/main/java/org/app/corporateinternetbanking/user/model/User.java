@@ -39,7 +39,7 @@ public class User {
    @OneToMany  (mappedBy = "createdBy")
     private List<Transaction>  createdTransactions;
    @OneToMany  (mappedBy = "approvedBy")
-    private List<Account>  createdApprovals;
+    private List<Transaction>  createdApprovals;
     private LocalDateTime createdAt=LocalDateTime.now();
 
 

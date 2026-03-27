@@ -18,15 +18,17 @@ public class Transaction {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-   private String accountNumber;
    private BigDecimal amount;
    @EnumeratedValue
    private TransactionStatus status=TransactionStatus.PENDING;
    @EnumeratedValue
    private TransactionType type;
    @ManyToOne
-   @JoinColumn(name = "accountI_id")
-   private Account account;
+   @JoinColumn(name = "source_account")
+   private Account sourceAccount;
+  @ManyToOne
+   @JoinColumn(name = "destination_account")
+   private Account destinationAccount;
      @Column(unique = true)
    private String transactionReference;
    private BigDecimal updatedBalance=BigDecimal.ZERO;
@@ -34,6 +36,7 @@ public class Transaction {
    @JoinColumn(name = "created_by")
    private User createdBy;
     private LocalDateTime createdAt=LocalDateTime.now();
+    @ManyToOne
     @JoinColumn(name = "approved_by")
    private User approvedBy;
     private LocalDateTime approvedAt;
