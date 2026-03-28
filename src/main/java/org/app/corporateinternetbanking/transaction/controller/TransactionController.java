@@ -24,7 +24,7 @@ public class TransactionController {
     TransactionServiceImpl service;
 
     @PostMapping("/initiate")
-    public ResponseEntity<GenericResponse> initiateTransaction(@RequestBody TransactionRequest request) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess {
+    public ResponseEntity<GenericResponse> initiateTransaction(@RequestBody TransactionRequest request) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess, DuplicateTransaction {
         TransactionResponse response= service.initiateTransaction(request);
         return new ResponseEntity<>(GenericResponse.success(response,"Transaction successfully initiated...waiting for approval"), HttpStatus.OK);
     }

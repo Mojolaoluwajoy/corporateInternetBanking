@@ -5,6 +5,7 @@ import org.app.corporateinternetbanking.account.exception.UserNotFound;
 import org.app.corporateinternetbanking.account.service.AccountServiceImpl;
 import org.app.corporateinternetbanking.account.dto.AccountRequest;
 import org.app.corporateinternetbanking.account.dto.AccountResponse;
+import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotActive;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
 import org.app.corporateinternetbanking.dto.GenericResponse;
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;
@@ -21,7 +22,7 @@ public class AccountController {
     @Autowired
     AccountServiceImpl service;
     @PostMapping("/create")
-    public ResponseEntity<GenericResponse> createAccount(@RequestBody AccountRequest request) throws OrganizationDoesNotExist, UserNotFound, CurrencyNotFound {
+    public ResponseEntity<GenericResponse> createAccount(@RequestBody AccountRequest request) throws OrganizationDoesNotExist, UserNotFound, CurrencyNotFound, CurrencyNotActive {
         AccountResponse response=service.createAccount(request);
         return new ResponseEntity<>(GenericResponse.success(response,"Account successfully registered"), HttpStatus.OK);
     }

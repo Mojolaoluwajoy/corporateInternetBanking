@@ -3,6 +3,7 @@ package org.app.corporateinternetbanking.globalExceptionHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
 import org.app.corporateinternetbanking.account.exception.UserNotFound;
+import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotActive;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
 import org.app.corporateinternetbanking.dto.GenericResponse;
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationAlreadyProcessed;
@@ -98,6 +99,10 @@ public class GlobalExceptionHandler {
 @ExceptionHandler(DuplicateTransaction.class)
     public ResponseEntity<GenericResponse> handleDuplicateTransaction(DuplicateTransaction exception){
     log.error("Duplicate Transaction: {}",exception.getMessage());
+    return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
+}@ExceptionHandler(CurrencyNotActive.class)
+    public ResponseEntity<GenericResponse> handleCurrencyNotActive(CurrencyNotActive exception){
+    log.error("Inactive currency: {}",exception.getMessage());
     return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
 }
 

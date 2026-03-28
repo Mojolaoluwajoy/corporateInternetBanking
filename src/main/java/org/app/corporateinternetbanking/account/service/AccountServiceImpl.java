@@ -7,6 +7,8 @@ import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
 import org.app.corporateinternetbanking.account.exception.UserNotFound;
 import org.app.corporateinternetbanking.account.model.Account;
 import org.app.corporateinternetbanking.account.repository.AccountRepository;
+import org.app.corporateinternetbanking.currency.enums.CurrencyStatus;
+import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotActive;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
 import org.app.corporateinternetbanking.currency.model.Currency;
 import org.app.corporateinternetbanking.currency.repository.CurrencyRepository;
@@ -41,10 +43,13 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public AccountResponse createAccount(AccountRequest request) throws OrganizationDoesNotExist, UserNotFound, CurrencyNotFound {
+    public AccountResponse createAccount(AccountRequest request) throws OrganizationDoesNotExist, UserNotFound, CurrencyNotFound, CurrencyNotActive {
         Account account = requestMap(request);
         Currency currency=currencyRepository.findByCode(request.getCurrencyCode())
                 .orElseThrow(()-> new CurrencyNotFound("This currency does not exist"));
+        if (currency.getStatus().equals(CurrencyStatus.INACTIVE)){
+            throw new CurrencyNotActive("This currency is not available for use right now");
+        }
         Organization organization = organizationRepository.findById(request.getOrganization())
                 .orElseThrow(() -> new OrganizationDoesNotExist("Organization not found"));
         User user = userRepository.findById(request.getCreatedBy())
