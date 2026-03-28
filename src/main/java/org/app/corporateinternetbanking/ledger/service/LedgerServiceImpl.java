@@ -16,11 +16,12 @@ public class LedgerServiceImpl implements LedgerService {
     private final LedgerRepository ledgerRepository;
 
     @Override
-    public LedgerEntry createEntry(Account account, Transaction transaction, EntryType type, BigDecimal amount, BigDecimal balanceAfter) {
+    public LedgerEntry createEntry(Account account, Transaction transaction, EntryType type,String currency, BigDecimal amount, BigDecimal balanceAfter) {
         LedgerEntry entry=new LedgerEntry();
-        entry.setAmount(amount);
+        entry.setAccount(account);
         entry.setTransaction(transaction);
         entry.setType(type);
+        entry.setCurrency(currency);
         entry.setAmount(amount);
         entry.setBalanceAfter(balanceAfter);
         return ledgerRepository.save(entry);

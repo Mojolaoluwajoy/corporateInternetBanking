@@ -140,11 +140,11 @@ if (!user.getRole().equals(UserRole.MAKER)){
                     //destination.getCurrency().getCode(),amount);
             BigDecimal newSourceBalance=source.getBalance().subtract(amount);
             source.setBalance(newSourceBalance);
-            ledgerService.createEntry(source,transaction, EntryType.DEBIT,amount,source.getBalance());
+            ledgerService.createEntry(source,transaction, EntryType.DEBIT,source.getCurrency().getCode(),amount,source.getBalance());
 
             BigDecimal newDestinationBalance=destination.getBalance().add(amount);
             destination.setBalance(newDestinationBalance);
-            ledgerService.createEntry(destination,transaction,EntryType.CREDIT,amount,destination.getBalance());
+            ledgerService.createEntry(destination,transaction,EntryType.CREDIT,destination.getCurrency().getCode(),amount,destination.getBalance());
 
               transaction.setUpdatedBalance(newSourceBalance);
             transaction.setConvertedAmount(convertedAmount);
@@ -161,7 +161,7 @@ if (!user.getRole().equals(UserRole.MAKER)){
         Account destination=transaction.getDestinationAccount();
         BigDecimal newBalance = destination.getBalance().add(transaction.getAmount());
       destination.setBalance(newBalance);
-        ledgerService.createEntry(destination,transaction,EntryType.CREDIT,transaction.getAmount(),destination.getBalance());
+        ledgerService.createEntry(destination,transaction,EntryType.CREDIT,destination.getCurrency().getCode(),transaction.getAmount(),destination.getBalance());
 
         accountRepository.save(destination);
 
@@ -175,7 +175,7 @@ if (!user.getRole().equals(UserRole.MAKER)){
      Account source=transaction.getSourceAccount();
       BigDecimal  newBalance = source.getBalance().subtract(transaction.getAmount());
        source.setBalance(newBalance);
-        ledgerService.createEntry(source,transaction,EntryType.DEBIT,transaction.getAmount(),source.getBalance());
+        ledgerService.createEntry(source,transaction,EntryType.DEBIT,source.getCurrency().getCode(),transaction.getAmount(),source.getBalance());
 
         accountRepository.save(source);
 

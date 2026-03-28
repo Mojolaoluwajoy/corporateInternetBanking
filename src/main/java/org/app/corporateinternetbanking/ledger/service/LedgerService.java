@@ -8,5 +8,5 @@ import org.app.corporateinternetbanking.transaction.model.Transaction;
 import java.math.BigDecimal;
 
 public interface LedgerService {
-    LedgerEntry createEntry(Account account, Transaction transaction, EntryType type, BigDecimal amount,BigDecimal balanceAfter);
+    LedgerEntry createEntry(Account account, Transaction transaction, EntryType type, String currency,BigDecimal amount,BigDecimal balanceAfter);
 }
