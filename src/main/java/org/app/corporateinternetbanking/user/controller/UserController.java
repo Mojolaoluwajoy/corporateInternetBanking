@@ -27,8 +27,13 @@ public class UserController {
     }
 
     @GetMapping("/viewAll")
-    public ResponseEntity<GenericResponse> viewAlUsers(){
-        List<UserResponse> users=service.ViewAllUsers();
-        return new ResponseEntity<>(GenericResponse.success(users,"Users found"),HttpStatus.OK);
+    public ResponseEntity<GenericResponse> viewAlUsers() {
+        List<UserResponse> users = service.ViewAllUsers();
+        return new ResponseEntity<>(GenericResponse.success(users, "Users found"), HttpStatus.OK);
+    }
+   @GetMapping("/users")
+           public ResponseEntity<GenericResponse> getUsers(@RequestParam int page,@RequestParam int size,@RequestParam (required = false) String status){
+       return new ResponseEntity<>(GenericResponse.success(service.viewByStatus(page,size,status),"Users found"),HttpStatus.OK);
+
     }
 }

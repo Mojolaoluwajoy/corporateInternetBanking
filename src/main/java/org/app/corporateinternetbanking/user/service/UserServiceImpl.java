@@ -17,6 +17,9 @@ import org.app.corporateinternetbanking.user.model.User;
 import org.app.corporateinternetbanking.user.repository.UserRepository;
 import org.app.corporateinternetbanking.user.utils.SuperAdminMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -62,6 +65,7 @@ public class UserServiceImpl implements UserService {
       return SuperAdminMap.mapSuperAdminResponse(savedUser);
     }
 
+
     @Override
     public String sendInvitationTokenToUser(InvitationRequest invitationRequest){
         String token= jwtService.generateEmailToken(invitationRequest.getUserEmail());
@@ -106,6 +110,14 @@ if (!jwtService.isEmailTokenValid(request.getToken())){
 
         }
         return userList;
+    }
+    @Override
+    public Page<User> viewByStatus(int page, int size, String status) {
+        Pageable pageable= PageRequest.of(page,size);
+        if (status!=null){
+return repository.findByStatus(status,pageable);
+        }
+        return repository.findAll(pageable);
     }
 
          public void sendMail(InvitationRequest invitationRequest,String token) {
