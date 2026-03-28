@@ -19,6 +19,8 @@ public class ApprovalMap {
         ApprovalResponse approvalResponse=new ApprovalResponse();
         approvalResponse.setSourceAccount(new AccountNumberDto(transaction.getSourceAccount().getAccountNumber()));
         approvalResponse.setAmount(transaction.getAmount());
+        approvalResponse.setExchangeRate(transaction.getExchangeRate());
+        approvalResponse.setConvertedAmount(transaction.getConvertedAmount());
         approvalResponse.setType(transaction.getType());
         approvalResponse.setStatus(transaction.getStatus());
         approvalResponse.setApprover(new UserIdDto(transaction.getApprovedBy().getId()));

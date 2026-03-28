@@ -6,7 +6,7 @@ import org.app.corporateinternetbanking.dto.GenericResponse;
 import org.app.corporateinternetbanking.transaction.dto.ApprovalRequest;
 import org.app.corporateinternetbanking.transaction.dto.ApprovalResponse;
 import org.app.corporateinternetbanking.transaction.dto.TransactionResponse;
-import org.app.corporateinternetbanking.transaction.dto.TransactiontRequest;
+import org.app.corporateinternetbanking.transaction.dto.TransactionRequest;
 import org.app.corporateinternetbanking.transaction.exceptions.*;
 import org.app.corporateinternetbanking.transaction.service.TransactionServiceImpl;
 import org.app.corporateinternetbanking.user.exceptions.UnauthorizedAccess;
@@ -24,7 +24,7 @@ public class TransactionController {
     TransactionServiceImpl service;
 
     @PostMapping("/initiate")
-    public ResponseEntity<GenericResponse> initiateTransaction(@RequestBody TransactiontRequest request) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess {
+    public ResponseEntity<GenericResponse> initiateTransaction(@RequestBody TransactionRequest request) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess {
         TransactionResponse response= service.initiateTransaction(request);
         return new ResponseEntity<>(GenericResponse.success(response,"Transaction successfully initiated...waiting for approval"), HttpStatus.OK);
     }
@@ -33,7 +33,7 @@ public class TransactionController {
         ApprovalResponse response= service.approval(request);
         return new ResponseEntity<>(GenericResponse.success(response,"Transaction Processed"),HttpStatus.OK);
     }
-    @GetMapping
+    @GetMapping("pending")
     public ResponseEntity<GenericResponse> viewPendingTransactions() throws NoPendingTransactionFound {
        List<TransactionResponse> response=service.viewPendingTransactions();
        return new ResponseEntity<>(GenericResponse.success(response,"Pending transactions found"),HttpStatus.OK);

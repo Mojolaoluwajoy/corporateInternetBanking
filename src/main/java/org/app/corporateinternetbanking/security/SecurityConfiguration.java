@@ -38,6 +38,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/accounts/create/").hasRole("ADMIN")
                         .requestMatchers("/transactions/initiate").hasRole("MAKER")
                         .requestMatchers("/transactions/approve").hasRole("APPROVER")
+                      .requestMatchers("/transactions/pending").hasAnyRole("APPROVER","ADMIN")
                        .requestMatchers("/currencies/**").hasRole("SUPER_ADMIN")
                         .anyRequest().authenticated() ).sessionManagement(session ->session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -5,7 +5,7 @@ import org.app.corporateinternetbanking.account.exception.UserNotFound;
 import org.app.corporateinternetbanking.transaction.dto.ApprovalRequest;
 import org.app.corporateinternetbanking.transaction.dto.ApprovalResponse;
 import org.app.corporateinternetbanking.transaction.dto.TransactionResponse;
-import org.app.corporateinternetbanking.transaction.dto.TransactiontRequest;
+import org.app.corporateinternetbanking.transaction.dto.TransactionRequest;
 import org.app.corporateinternetbanking.transaction.exceptions.*;
 import org.app.corporateinternetbanking.user.exceptions.UnauthorizedAccess;
 
@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface TransactionService {
 
-        TransactionResponse initiateTransaction(TransactiontRequest request) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess;
+        TransactionResponse initiateTransaction(TransactionRequest request) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess, DuplicateTransaction;
 
        ApprovalResponse approval(ApprovalRequest request) throws TransactionAlreadyProcessed, TransactionDoesNotExist, InvalidStatus, UnsupportedTransactionType, UserNotFound, UnauthorizedAccess, InvalidAmount, AccountDoesNotExist;
        List<TransactionResponse> viewPendingTransactions() throws NoPendingTransactionFound;

@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 public class ApprovalResponse {
     private AccountNumberDto sourceAccount;
     private BigDecimal amount;
+    private BigDecimal convertedAmount;
+    private BigDecimal exchangeRate;
     private TransactionType type;
 private TransactionStatus status;
 private UserIdDto approver;

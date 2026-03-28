@@ -19,6 +19,8 @@ public class Transaction {
    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
    private BigDecimal amount;
+   private BigDecimal convertedAmount;
+   private BigDecimal exchangeRate;
    @EnumeratedValue
    private TransactionStatus status=TransactionStatus.PENDING;
    @EnumeratedValue

@@ -95,6 +95,11 @@ public class GlobalExceptionHandler {
     log.error("No pending Transaction(s): {}",exception.getMessage());
     return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
 }
+@ExceptionHandler(DuplicateTransaction.class)
+    public ResponseEntity<GenericResponse> handleDuplicateTransaction(DuplicateTransaction exception){
+    log.error("Duplicate Transaction: {}",exception.getMessage());
+    return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
+}
 
 
 

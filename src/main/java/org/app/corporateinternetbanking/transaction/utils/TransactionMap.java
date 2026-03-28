@@ -2,13 +2,13 @@ package org.app.corporateinternetbanking.transaction.utils;
 
 import org.app.corporateinternetbanking.account.dto.AccountNumberDto;
 import org.app.corporateinternetbanking.transaction.model.Transaction;
-import org.app.corporateinternetbanking.transaction.dto.TransactiontRequest;
+import org.app.corporateinternetbanking.transaction.dto.TransactionRequest;
 import org.app.corporateinternetbanking.transaction.dto.TransactionResponse;
 import org.app.corporateinternetbanking.user.dto.UserIdDto;
 
 public class TransactionMap {
 
-    public static Transaction mapRequest(TransactiontRequest request){
+    public static Transaction mapRequest(TransactionRequest request){
         Transaction transaction=new Transaction();
 
        // transaction.setAccountNumber(request.getAccountNumber());
