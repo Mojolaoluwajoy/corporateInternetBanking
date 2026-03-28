@@ -49,6 +49,7 @@ public class AccountServiceImpl implements AccountService {
                 .orElseThrow(()-> new CurrencyNotFound("This currency does not exist"));
         if (currency.getStatus().equals(CurrencyStatus.INACTIVE)){
             throw new CurrencyNotActive("This currency is not available for use right now");
+
         }
         Organization organization = organizationRepository.findById(request.getOrganization())
                 .orElseThrow(() -> new OrganizationDoesNotExist("Organization not found"));

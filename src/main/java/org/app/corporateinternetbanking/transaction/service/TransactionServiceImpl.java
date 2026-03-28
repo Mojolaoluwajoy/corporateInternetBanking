@@ -6,6 +6,8 @@ import org.app.corporateinternetbanking.account.model.Account;
 import org.app.corporateinternetbanking.account.repository.AccountRepository;
 import org.app.corporateinternetbanking.currencyIntegration.CurrencyIntegrationService;
 import org.app.corporateinternetbanking.dto.GenericResponse;
+import org.app.corporateinternetbanking.ledger.enums.EntryType;
+import org.app.corporateinternetbanking.ledger.service.LedgerService;
 import org.app.corporateinternetbanking.transaction.dto.ApprovalRequest;
 import org.app.corporateinternetbanking.transaction.dto.ApprovalResponse;
 import org.app.corporateinternetbanking.transaction.dto.TransactionRequest;
@@ -37,7 +39,10 @@ public class TransactionServiceImpl implements TransactionService {
    TransactionRepository transactionRepository;
 @Autowired
     UserRepository userRepository;
+@Autowired
 CurrencyIntegrationService currencyService;
+@Autowired
+    LedgerService ledgerService;
 
     @Override
     public TransactionResponse initiateTransaction(TransactionRequest request) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess, DuplicateTransaction {
@@ -134,16 +139,20 @@ if (!user.getRole().equals(UserRole.MAKER)){
                     //currencyService.convert(source.getCurrency().getCode(),
                     //destination.getCurrency().getCode(),amount);
             BigDecimal newSourceBalance=source.getBalance().subtract(amount);
-            BigDecimal newDestinationBalance=destination.getBalance().add(amount);
-
             source.setBalance(newSourceBalance);
+            ledgerService.createEntry(source,transaction, EntryType.DEBIT,amount,source.getBalance());
+
+            BigDecimal newDestinationBalance=destination.getBalance().add(amount);
             destination.setBalance(newDestinationBalance);
-            transaction.setUpdatedBalance(newSourceBalance);
+            ledgerService.createEntry(destination,transaction,EntryType.CREDIT,amount,destination.getBalance());
+
+              transaction.setUpdatedBalance(newSourceBalance);
             transaction.setConvertedAmount(convertedAmount);
             transaction.setExchangeRate(rate);
             transaction.setAmount(amount);
 
         }
+        transaction.setStatus(TransactionStatus.APPROVED);
         transaction=transactionRepository.save(transaction);
         return mapApprovalResponse(transaction);
     }
@@ -152,6 +161,8 @@ if (!user.getRole().equals(UserRole.MAKER)){
         Account destination=transaction.getDestinationAccount();
         BigDecimal newBalance = destination.getBalance().add(transaction.getAmount());
       destination.setBalance(newBalance);
+        ledgerService.createEntry(destination,transaction,EntryType.CREDIT,transaction.getAmount(),destination.getBalance());
+
         accountRepository.save(destination);
 
         transaction.setUpdatedBalance(newBalance);
@@ -164,6 +175,8 @@ if (!user.getRole().equals(UserRole.MAKER)){
      Account source=transaction.getSourceAccount();
       BigDecimal  newBalance = source.getBalance().subtract(transaction.getAmount());
        source.setBalance(newBalance);
+        ledgerService.createEntry(source,transaction,EntryType.DEBIT,transaction.getAmount(),source.getBalance());
+
         accountRepository.save(source);
 
         transaction.setUpdatedBalance(newBalance);
