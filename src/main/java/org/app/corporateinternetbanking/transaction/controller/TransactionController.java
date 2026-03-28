@@ -5,14 +5,15 @@ import org.app.corporateinternetbanking.account.exception.UserNotFound;
 import org.app.corporateinternetbanking.dto.GenericResponse;
 import org.app.corporateinternetbanking.transaction.dto.ApprovalRequest;
 import org.app.corporateinternetbanking.transaction.dto.ApprovalResponse;
-import org.app.corporateinternetbanking.transaction.dto.TransactionResponse;
 import org.app.corporateinternetbanking.transaction.dto.TransactionRequest;
+import org.app.corporateinternetbanking.transaction.dto.TransactionResponse;
 import org.app.corporateinternetbanking.transaction.exceptions.*;
 import org.app.corporateinternetbanking.transaction.service.TransactionServiceImpl;
 import org.app.corporateinternetbanking.user.exceptions.UnauthorizedAccess;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,6 +38,11 @@ public class TransactionController {
     public ResponseEntity<GenericResponse> viewPendingTransactions() throws NoPendingTransactionFound {
        List<TransactionResponse> response=service.viewPendingTransactions();
        return new ResponseEntity<>(GenericResponse.success(response,"Pending transactions found"),HttpStatus.OK);
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/transactions")
+    public ResponseEntity<GenericResponse> getTransactions(@RequestParam int page,@RequestParam int size,@RequestParam (required = false) String status){
+        return new ResponseEntity<>(GenericResponse.success(service.getTransactions(page,size, status),"Transaction found"),HttpStatus.OK);
     }
 
 

@@ -22,6 +22,9 @@ import org.app.corporateinternetbanking.user.exceptions.UnauthorizedAccess;
 import org.app.corporateinternetbanking.user.model.User;
 import org.app.corporateinternetbanking.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -197,5 +200,17 @@ if (!user.getRole().equals(UserRole.MAKER)){
                       .map(TransactionMap::mapResponse)
                       .toList();
     }
+
+    @Override
+    public Page<Transaction> getTransactions(int page, int size, String status) {
+        Pageable pageable= PageRequest.of(page,size);
+        if (status!=null){
+            return  transactionRepository.findByStatus(status,pageable);
+        }
+        return transactionRepository.findAll(pageable);
+
+
+    }
+
 
 }

@@ -7,7 +7,9 @@ import org.app.corporateinternetbanking.transaction.dto.ApprovalResponse;
 import org.app.corporateinternetbanking.transaction.dto.TransactionResponse;
 import org.app.corporateinternetbanking.transaction.dto.TransactionRequest;
 import org.app.corporateinternetbanking.transaction.exceptions.*;
+import org.app.corporateinternetbanking.transaction.model.Transaction;
 import org.app.corporateinternetbanking.user.exceptions.UnauthorizedAccess;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -16,5 +18,9 @@ public interface TransactionService {
         TransactionResponse initiateTransaction(TransactionRequest request) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess, DuplicateTransaction;
 
        ApprovalResponse approval(ApprovalRequest request) throws TransactionAlreadyProcessed, TransactionDoesNotExist, InvalidStatus, UnsupportedTransactionType, UserNotFound, UnauthorizedAccess, InvalidAmount, AccountDoesNotExist;
+
        List<TransactionResponse> viewPendingTransactions() throws NoPendingTransactionFound;
+       Page<Transaction> getTransactions(int page,int size,String status);
+
+
 }
