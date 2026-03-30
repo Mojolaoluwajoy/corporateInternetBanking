@@ -27,22 +27,40 @@ public class User {
     private String email;
     private String password;
     private String nin;
-     @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private UserRole role;
     @Enumerated(EnumType.STRING)
-    private UserStatus status= UserStatus.INACTIVE;
-      @ManyToOne
+    private UserStatus status;
+    @ManyToOne
     @JoinColumn(name = "organization_id")
     private Organization organization;
-    @OneToMany  (mappedBy = "createdBy")
-    private List<Account>  createdAccounts;
-   @OneToMany  (mappedBy = "createdBy")
-    private List<Transaction>  createdTransactions;
-   @OneToMany  (mappedBy = "approvedBy")
-    private List<Transaction>  createdApprovals;
-    private LocalDateTime createdAt=LocalDateTime.now();
+    @OneToMany(mappedBy = "createdBy", fetch = FetchType.EAGER)
+    private List<Account> createdAccounts;
+    @OneToMany(mappedBy = "createdBy", fetch = FetchType.EAGER)
+    private List<Transaction> createdTransactions;
+    @OneToMany(mappedBy = "approvedBy", fetch = FetchType.EAGER)
+    private List<Transaction> createdApprovals;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
 
-
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", userId='" + userId + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", nin='" + nin + '\'' +
+                ", role=" + role +
+                ", status=" + status +
+                ", organization=" + organization +
+                ", createdAccounts=" + createdAccounts +
+                ", createdTransactions=" + createdTransactions +
+                ", createdApprovals=" + createdApprovals +
+                ", createdAt=" + createdAt +
+                '}';
+    }
 
 }

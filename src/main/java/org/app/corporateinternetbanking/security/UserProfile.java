@@ -15,34 +15,38 @@ import java.util.Collections;
 
 @Getter
 public class UserProfile implements UserDetails {
-      private String firstName;
-      private String lastName;
-      private String nin;
-      private String password;
-      private String email;
-      private UserRole role;
-      private LocalDateTime createdAt;
-      private UserStatus status;
+    private String firstName;
+    private String lastName;
+    private String nin;
+    private String password;
+    private String email;
+    private UserRole role;
+    private LocalDateTime createdAt;
+    private UserStatus status;
+
     @Override
     public boolean isAccountNonExpired() {
-        return true; }
+        return true;
+    }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;  }
+        return true;
+    }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true; }
+        return true;
+    }
 
     @Override
     public boolean isEnabled() {
-        return status== UserStatus.ACTIVE;
+        return status == UserStatus.ACTIVE;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(role.name()));
+        return Collections.singleton(new SimpleGrantedAuthority("ROLE_"+role.name()));
     }
 
     @Override
@@ -54,17 +58,18 @@ public class UserProfile implements UserDetails {
     public String getUsername() {
         return email;
     }
-    public static UserProfile parse(User user){
-        UserProfile userProfile=new UserProfile();
 
-        userProfile.email= user.getEmail();
-        userProfile.firstName= user.getFirstName();
-        userProfile.lastName= user.getLastName();
-        userProfile.nin=user.getNin();
-        userProfile.password=user.getPassword();
-        userProfile.createdAt=user.getCreatedAt();
-        userProfile.role=user.getRole();
-        userProfile.status=user.getStatus();
+    public static UserProfile parse(User user) {
+        UserProfile userProfile = new UserProfile();
+
+        userProfile.email = user.getEmail();
+        userProfile.firstName = user.getFirstName();
+        userProfile.lastName = user.getLastName();
+        userProfile.nin = user.getNin();
+        userProfile.password = user.getPassword();
+        userProfile.createdAt = user.getCreatedAt();
+        userProfile.role = user.getRole();
+        userProfile.status = user.getStatus();
         return userProfile;
     }
 }

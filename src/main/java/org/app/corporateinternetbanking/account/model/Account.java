@@ -3,6 +3,7 @@ package org.app.corporateinternetbanking.account.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.app.corporateinternetbanking.currency.model.Currency;
 import org.app.corporateinternetbanking.organization.model.Organization;
 import org.app.corporateinternetbanking.transaction.model.Transaction;
@@ -15,6 +16,7 @@ import java.util.List;
 @Entity
 @Setter
 @Getter
+@ToString
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

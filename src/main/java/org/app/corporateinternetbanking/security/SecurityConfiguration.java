@@ -1,9 +1,11 @@
 package org.app.corporateinternetbanking.security;
 
 import lombok.RequiredArgsConstructor;
+import org.app.corporateinternetbanking.user.enums.UserRole;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -15,7 +17,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.authentication.AuthenticationProvider;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -36,10 +37,10 @@ public class SecurityConfiguration {
                         .requestMatchers("/organizations/findBy","/organization/viewAll").hasRole("SUPERADMIN")
                         .requestMatchers("/organizations/approve/").hasRole("SUPER_ADMIN")
                         .requestMatchers("/accounts/create/").hasRole("ADMIN")
-                        .requestMatchers("/transactions/initiate").hasRole("MAKER")
+                      .requestMatchers("/transactions/initiate").hasRole(UserRole.MAKER.name())
                         .requestMatchers("/transactions/approve").hasRole("APPROVER")
                       .requestMatchers("/transactions/pending").hasAnyRole("APPROVER","ADMIN")
-                       .requestMatchers("/currencies/**").hasRole("SUPER_ADMIN")
+                       .requestMatchers("/currencies/status/").hasRole("SUPER_ADMIN")
                         .anyRequest().authenticated() ).sessionManagement(session ->session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                         .authenticationProvider(authenticationProvider())

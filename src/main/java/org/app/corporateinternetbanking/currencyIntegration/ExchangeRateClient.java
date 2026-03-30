@@ -10,7 +10,7 @@ public class ExchangeRateClient {
     public BigDecimal getRate(String from,String to){
         try {
             String url="https://api.exchangerate-api.com/v4/latest/"+from;
-
+//https://v6.exchangerate-api.com/v6/0b1d2d0491a30b594d716ea4/latest/USD
             ExchangeRateResponse response=restTemplate.getForObject(url,ExchangeRateResponse.class);
             if (response==null|| response.getRates().get(to)==null){
                 throw new InvalidCurrency("Invalid currency or rate not found");

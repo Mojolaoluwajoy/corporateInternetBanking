@@ -3,6 +3,7 @@ package org.app.corporateinternetbanking.user.utils;
 import org.app.corporateinternetbanking.organization.dto.OrganizationId;
 import org.app.corporateinternetbanking.user.dto.UserRegistrationRequest;
 import org.app.corporateinternetbanking.user.dto.UserResponse;
+import org.app.corporateinternetbanking.user.enums.UserStatus;
 import org.app.corporateinternetbanking.user.model.User;
 
 import java.util.UUID;
@@ -12,6 +13,7 @@ public class Map {
 
     public static User userMapRequest(UserRegistrationRequest registrationRequest){
 User user=new User();
+user.setStatus(UserStatus.INACTIVE);
 user.setUserId(UUID.randomUUID().toString());
 user.setFirstName(registrationRequest.getFirstName());
 user.setLastName(registrationRequest.getLastName());

@@ -47,6 +47,7 @@ public class AccountServiceImpl implements AccountService {
         Account account = requestMap(request);
         Currency currency=currencyRepository.findByCode(request.getCurrencyCode())
                 .orElseThrow(()-> new CurrencyNotFound("This currency does not exist"));
+        account.setCurrency(currency);
         if (currency.getStatus().equals(CurrencyStatus.INACTIVE)){
             throw new CurrencyNotActive("This currency is not available for use right now");
 
@@ -56,7 +57,7 @@ public class AccountServiceImpl implements AccountService {
         User user = userRepository.findById(request.getCreatedBy())
                 .orElseThrow(() -> new UserNotFound("The user with the specified id does not exist"));
         account.setOrganization(organization);
-        account.setCreatedBy(user);
+         account.setCreatedBy(user);
 
 Account savedAccount=repository.save(account);
 return responseMap(savedAccount);

@@ -1,5 +1,7 @@
 package org.app.corporateinternetbanking.transaction.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
 import org.app.corporateinternetbanking.account.exception.UserNotFound;
 import org.app.corporateinternetbanking.dto.GenericResponse;
@@ -17,15 +19,16 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-@RequestMapping
-@RestController("/transactions")
+@Slf4j
+@RestController
+@RequestMapping("/transactions")
 public class TransactionController {
     @Autowired
     TransactionServiceImpl service;
 
     @PostMapping("/initiate")
-    public ResponseEntity<GenericResponse> initiateTransaction(@RequestBody TransactionRequest request) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess, DuplicateTransaction {
+    public ResponseEntity<GenericResponse> initiateTransaction(@RequestBody TransactionRequest request, HttpServletRequest servletRequest) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess, DuplicateTransaction {
+        log.info("URI: "+servletRequest.getRequestURI());
         TransactionResponse response= service.initiateTransaction(request);
         return new ResponseEntity<>(GenericResponse.success(response,"Transaction successfully initiated...waiting for approval"), HttpStatus.OK);
     }
