@@ -14,6 +14,7 @@ import org.app.corporateinternetbanking.transaction.dto.ApprovalResponse;
 import org.app.corporateinternetbanking.transaction.dto.TransactionRequest;
 import org.app.corporateinternetbanking.transaction.dto.TransactionResponse;
 import org.app.corporateinternetbanking.transaction.enums.TransactionStatus;
+import org.app.corporateinternetbanking.transaction.enums.TransactionType;
 import org.app.corporateinternetbanking.transaction.exceptions.*;
 import org.app.corporateinternetbanking.transaction.model.Transaction;
 import org.app.corporateinternetbanking.transaction.repository.TransactionRepository;
@@ -118,8 +119,8 @@ if (!user.getRole().equals(UserRole.MAKER)){
             case DEBIT -> processDebit(transaction);
             case CREDIT -> processCredit(transaction);
             case TRANSFER -> processTransfer(transaction);
-
         }
+        transaction.setStatus(TransactionStatus.APPROVED);
 
     }
 
@@ -127,7 +128,7 @@ if (!user.getRole().equals(UserRole.MAKER)){
         Account source=transaction.getSourceAccount();
         Account destination=transaction.getDestinationAccount();
         BigDecimal amount=transaction.getAmount();
-
+transaction.setType(TransactionType.TRANSFER);
         if (source.getCurrency().getCode().equals(destination.getCurrency().getCode())){
             BigDecimal newSourceBalance=source.getBalance().subtract(amount);
             BigDecimal newDestinationBalance=destination.getBalance().add(amount);
@@ -165,6 +166,7 @@ if (!user.getRole().equals(UserRole.MAKER)){
         Account destination=transaction.getDestinationAccount();
         BigDecimal newBalance = destination.getBalance().add(transaction.getAmount());
       destination.setBalance(newBalance);
+      transaction.setType(TransactionType.CREDIT);
         ledgerService.createEntry(destination,transaction,EntryType.CREDIT,destination.getCurrency().getCode(),transaction.getAmount(),destination.getBalance());
 
         accountRepository.save(destination);
@@ -179,6 +181,7 @@ if (!user.getRole().equals(UserRole.MAKER)){
      Account source=transaction.getSourceAccount();
       BigDecimal  newBalance = source.getBalance().subtract(transaction.getAmount());
        source.setBalance(newBalance);
+       transaction.setType(TransactionType.DEBIT);
         ledgerService.createEntry(source,transaction,EntryType.DEBIT,source.getCurrency().getCode(),transaction.getAmount(),source.getBalance());
 
         accountRepository.save(source);
