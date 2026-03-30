@@ -88,7 +88,7 @@ if (!user.getRole().equals(UserRole.MAKER)){
     public ApprovalResponse approval(ApprovalRequest request) throws TransactionAlreadyProcessed, TransactionDoesNotExist, InvalidStatus, UnsupportedTransactionType, UserNotFound, UnauthorizedAccess, InvalidAmount, AccountDoesNotExist, CurrencyNotFound {
         Transaction transaction = transactionRepository.findById(request.getTransactionId())
                 .orElseThrow(() -> new TransactionDoesNotExist("This transaction does not exist"));
-        if (transaction.getAmount().compareTo(java.math.BigDecimal.ZERO) < 0) {
+        if (transaction.getAmount().compareTo(transaction.getSourceAccount().getBalance())<0) {
             transaction.setStatus(TransactionStatus.REJECTED);
             throw new InvalidAmount("Insufficient balance");
         }
