@@ -4,8 +4,9 @@ import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
 import org.app.corporateinternetbanking.account.exception.UserNotFound;
 import org.app.corporateinternetbanking.account.model.Account;
 import org.app.corporateinternetbanking.account.repository.AccountRepository;
-import org.app.corporateinternetbanking.currencyIntegration.CurrencyIntegrationService;
+import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
 import org.app.corporateinternetbanking.dto.GenericResponse;
+import org.app.corporateinternetbanking.integration.JsonPlaceRestClientService;
 import org.app.corporateinternetbanking.ledger.enums.EntryType;
 import org.app.corporateinternetbanking.ledger.service.LedgerService;
 import org.app.corporateinternetbanking.transaction.dto.ApprovalRequest;
@@ -43,7 +44,7 @@ public class TransactionServiceImpl implements TransactionService {
 @Autowired
     UserRepository userRepository;
 @Autowired
-CurrencyIntegrationService currencyService;
+JsonPlaceRestClientService currencyService;
 @Autowired
     LedgerService ledgerService;
 
@@ -83,7 +84,7 @@ if (!user.getRole().equals(UserRole.MAKER)){
 
 
     @Override
-    public ApprovalResponse approval(ApprovalRequest request) throws TransactionAlreadyProcessed, TransactionDoesNotExist, InvalidStatus, UnsupportedTransactionType, UserNotFound, UnauthorizedAccess, InvalidAmount, AccountDoesNotExist {
+    public ApprovalResponse approval(ApprovalRequest request) throws TransactionAlreadyProcessed, TransactionDoesNotExist, InvalidStatus, UnsupportedTransactionType, UserNotFound, UnauthorizedAccess, InvalidAmount, AccountDoesNotExist, CurrencyNotFound {
         Transaction transaction = transactionRepository.findById(request.getTransactionId())
                 .orElseThrow(() -> new TransactionDoesNotExist("This transaction does not exist"));
         if (transaction.getAmount().compareTo(java.math.BigDecimal.ZERO) < 0) {
@@ -112,7 +113,7 @@ if (!user.getRole().equals(UserRole.MAKER)){
         return mapApprovalResponse(transaction);
     }
 
-    private void processTransaction(Transaction transaction) {
+    private void processTransaction(Transaction transaction) throws CurrencyNotFound {
         switch(transaction.getType()){
             case DEBIT -> processDebit(transaction);
             case CREDIT -> processCredit(transaction);
@@ -122,7 +123,7 @@ if (!user.getRole().equals(UserRole.MAKER)){
 
     }
 
-    private ApprovalResponse processTransfer(Transaction transaction) {
+    private ApprovalResponse processTransfer(Transaction transaction) throws CurrencyNotFound {
         Account source=transaction.getSourceAccount();
         Account destination=transaction.getDestinationAccount();
         BigDecimal amount=transaction.getAmount();
@@ -145,9 +146,9 @@ if (!user.getRole().equals(UserRole.MAKER)){
             source.setBalance(newSourceBalance);
             ledgerService.createEntry(source,transaction, EntryType.DEBIT,source.getCurrency().getCode(),amount,source.getBalance());
 
-            BigDecimal newDestinationBalance=destination.getBalance().add(amount);
+            BigDecimal newDestinationBalance=destination.getBalance().add(convertedAmount);
             destination.setBalance(newDestinationBalance);
-            ledgerService.createEntry(destination,transaction,EntryType.CREDIT,destination.getCurrency().getCode(),amount,destination.getBalance());
+            ledgerService.createEntry(destination,transaction,EntryType.CREDIT,destination.getCurrency().getCode(),convertedAmount,destination.getBalance());
 
               transaction.setUpdatedBalance(newSourceBalance);
             transaction.setConvertedAmount(convertedAmount);

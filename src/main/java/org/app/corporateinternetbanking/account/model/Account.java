@@ -24,7 +24,13 @@ public class Account {
     private String name;
     @Column(unique = true)
     private String accountNumber;
-    private BigDecimal balance=BigDecimal.ZERO;
+    private BigDecimal balance;
+    @PrePersist
+    public void prePersist(){
+        if (balance==null){
+            balance=BigDecimal.ZERO;
+        }
+    }
     private String type;
     @OneToMany(mappedBy = "sourceAccount")
     private List<Transaction> sourceTransactions;
