@@ -6,8 +6,6 @@ import org.app.corporateinternetbanking.transaction.dto.ApprovalResponse;
 import org.app.corporateinternetbanking.transaction.model.Transaction;
 import org.app.corporateinternetbanking.user.dto.UserIdDto;
 
-import java.time.LocalDateTime;
-
 public class ApprovalMap {
     public static Transaction mapApprovalRequest(ApprovalRequest request){
         Transaction transaction=new Transaction();
@@ -24,8 +22,7 @@ public class ApprovalMap {
         approvalResponse.setType(transaction.getType());
         approvalResponse.setStatus(transaction.getStatus());
         approvalResponse.setApprover(new UserIdDto(transaction.getApprovedBy().getId()));
-        transaction.setApprovedAt(LocalDateTime.now());
-        approvalResponse.setApprovedAt(transaction.getApprovedAt());
+         approvalResponse.setApprovedAt(transaction.getApprovedAt());
         return approvalResponse;
     }
 }

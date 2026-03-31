@@ -15,7 +15,7 @@ public class JsonPlaceRestClientService {
     @Autowired
     private RestClient restClient;
 
-    private final String BASE_URL="https://v6.exchangerate-api.com/v6/0b1d2d0491a30b594d716ea4/latest/USD";
+    private final String BASE_URL="https://v6.exchangerate-api.com/v6/0b1d2d0491a30b594d716ea4/latest/";
 
     public BigDecimal getRate(String base,String target) throws CurrencyNotFound {
         CurrencyIntegrationResponse response=restClient

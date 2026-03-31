@@ -1,5 +1,6 @@
 package org.app.corporateinternetbanking.transaction.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
 import org.app.corporateinternetbanking.account.exception.UserNotFound;
 import org.app.corporateinternetbanking.account.model.Account;
@@ -30,12 +31,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.app.corporateinternetbanking.transaction.utils.ApprovalMap.mapApprovalRequest;
 import static org.app.corporateinternetbanking.transaction.utils.ApprovalMap.mapApprovalResponse;
 import static org.app.corporateinternetbanking.transaction.utils.TransactionMap.mapRequest;
 import static org.app.corporateinternetbanking.transaction.utils.TransactionMap.mapResponse;
+@Slf4j
 @Service
 public class TransactionServiceImpl implements TransactionService {
    @Autowired
@@ -109,7 +113,8 @@ if (!user.getRole().equals(UserRole.MAKER)){
             transactionRepository.save(transaction);
             return mapApprovalResponse(transaction);
         }
-
+        transaction.setApprovedAt(LocalDateTime.now());
+mapApprovalRequest(request);
         processTransaction(transaction);
         return mapApprovalResponse(transaction);
     }
@@ -128,46 +133,46 @@ if (!user.getRole().equals(UserRole.MAKER)){
         Account source=transaction.getSourceAccount();
         Account destination=transaction.getDestinationAccount();
         BigDecimal amount=transaction.getAmount();
-transaction.setType(TransactionType.TRANSFER);
         if (source.getCurrency().getCode().equals(destination.getCurrency().getCode())){
             BigDecimal newSourceBalance=source.getBalance().subtract(amount);
             BigDecimal newDestinationBalance=destination.getBalance().add(amount);
             source.setBalance(newSourceBalance);
-            destination.setBalance(newDestinationBalance);
             transaction.setUpdatedBalance(newSourceBalance);
         }
         else {
-            String from=source.getCurrency().getCode();
+                  String from=source.getCurrency().getCode();
             String to=destination.getCurrency().getCode();
-            BigDecimal rate=currencyService.getRate(from,to);
-            BigDecimal convertedAmount=amount.multiply(rate);
-                    //currencyService.convert(source.getCurrency().getCode(),
-                    //destination.getCurrency().getCode(),amount);
-            BigDecimal newSourceBalance=source.getBalance().subtract(amount);
-            source.setBalance(newSourceBalance);
-            ledgerService.createEntry(source,transaction, EntryType.DEBIT,source.getCurrency().getCode(),amount,source.getBalance());
 
+              BigDecimal rate=currencyService.getRate(from,to);
+            BigDecimal convertedAmount=amount.multiply(rate);
+
+             BigDecimal newSourceBalance=source.getBalance().subtract(amount);
+            source.setBalance(newSourceBalance);
+             ledgerService.createEntry(source,transaction, EntryType.DEBIT,source.getCurrency().getCode(),amount,newSourceBalance);
+log.info("after debit");
             BigDecimal newDestinationBalance=destination.getBalance().add(convertedAmount);
             destination.setBalance(newDestinationBalance);
-            ledgerService.createEntry(destination,transaction,EntryType.CREDIT,destination.getCurrency().getCode(),convertedAmount,destination.getBalance());
-
+            ledgerService.createEntry(destination,transaction,EntryType.CREDIT,destination.getCurrency().getCode(),convertedAmount,newDestinationBalance);
+            log.info("after debit");
               transaction.setUpdatedBalance(newSourceBalance);
             transaction.setConvertedAmount(convertedAmount);
             transaction.setExchangeRate(rate);
             transaction.setAmount(amount);
 
         }
+
+        transaction.setType(TransactionType.TRANSFER);
         transaction.setStatus(TransactionStatus.APPROVED);
         transaction=transactionRepository.save(transaction);
         return mapApprovalResponse(transaction);
     }
 
     private ApprovalResponse processCredit(Transaction transaction) {
+        transaction.setType(TransactionType.CREDIT);
         Account destination=transaction.getDestinationAccount();
         BigDecimal newBalance = destination.getBalance().add(transaction.getAmount());
       destination.setBalance(newBalance);
-      transaction.setType(TransactionType.CREDIT);
-        ledgerService.createEntry(destination,transaction,EntryType.CREDIT,destination.getCurrency().getCode(),transaction.getAmount(),destination.getBalance());
+         ledgerService.createEntry(destination,transaction,EntryType.CREDIT,destination.getCurrency().getCode(),transaction.getAmount(),destination.getBalance());
 
         accountRepository.save(destination);
 
@@ -214,6 +219,20 @@ transaction.setType(TransactionType.TRANSFER);
         return transactionRepository.findAll(pageable);
 
 
+    }
+
+    @Override
+    public void expirePendingTransactions() {
+       log.info("Processing pending orders");
+        LocalDateTime expirationTime=LocalDateTime.now().minusMinutes(1);
+        List <Transaction> expiredTransactions=transactionRepository.findByStatusAndCreatedAtBefore(TransactionStatus.PENDING,expirationTime);
+
+        for (Transaction transaction:expiredTransactions){
+            transaction.setStatus(TransactionStatus.EXPIRED);
+            transaction.setApprovedAt(LocalDateTime.now());
+            log.info("Automatically expired due to time-out");
+        }
+        transactionRepository.saveAll(expiredTransactions);
     }
 
 

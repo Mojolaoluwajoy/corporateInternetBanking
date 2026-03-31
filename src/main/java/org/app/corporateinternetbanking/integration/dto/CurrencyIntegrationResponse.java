@@ -1,5 +1,6 @@
 package org.app.corporateinternetbanking.integration.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,5 +10,6 @@ import java.util.Map;
 @Getter
 public class CurrencyIntegrationResponse {
     private String base;
-    private Map<String,Double> rates;
+    @JsonProperty("conversion_rates")
+    private Map<String,Double> conversionRates;
 }
