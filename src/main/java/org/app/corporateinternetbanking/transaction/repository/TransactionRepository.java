@@ -5,7 +5,9 @@ import org.app.corporateinternetbanking.transaction.model.Transaction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -25,4 +27,10 @@ public interface TransactionRepository extends JpaRepository<Transaction,Long> {
 List<Transaction> findByCreatedAtBetween(LocalDateTime start,LocalDateTime end);
 List<Transaction> findByCreatedAtBetweenAndStatus(LocalDateTime start,LocalDateTime end,TransactionStatus status);
 
+
+@Query("""
+SELECT COALESCE(SUM(t.amount), 0)
+From Transaction t
+WHERE t.createdAt BETWEEN :start AND:end""")
+    BigDecimal getTotalVolume(LocalDateTime start,LocalDateTime end);
 }

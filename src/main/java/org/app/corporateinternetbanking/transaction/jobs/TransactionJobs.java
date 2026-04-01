@@ -14,6 +14,7 @@ import org.app.corporateinternetbanking.user.repository.UserRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 @Slf4j
@@ -85,12 +86,14 @@ public class TransactionJobs {
             LocalDateTime start=LocalDateTime.now();
         LocalDateTime end=LocalDateTime.now().minusHours(24);
         List<Transaction> transactions=transactionRepository.findByCreatedAtBetween(start,end);
+        BigDecimal transactionVolume=transactionRepository.getTotalVolume(start,end);
         List<Transaction> pendingTransactions=transactionRepository.findByCreatedAtBetweenAndStatus(start,end,TransactionStatus.PENDING);
         List<Transaction> successfulTransactions=transactionRepository.findByCreatedAtBetweenAndStatus(start,end,TransactionStatus.APPROVED);
         List<Transaction> expiredTransactions=transactionRepository.findByCreatedAtBetweenAndStatus(start,end,TransactionStatus.EXPIRED);
         List<Transaction> rejectedTransactions=transactionRepository.findByCreatedAtBetweenAndStatus(start,end,TransactionStatus.REJECTED);
         message.append("Daily summary report\n\n");
         message.append("Total Transactions: ").append(transactions.size()).append("\n\n");
+        message.append("Total Transaction volume: ").append(transactionVolume).append("\n\n");
         message.append("Total pending transactions: ").append(pendingTransactions.size()).append("\n\n");
         message.append("Total successful transactions:").append(successfulTransactions.size()).append("\n\n");
         message.append("Total expired transactions: ").append(expiredTransactions.size()).append("\n\n");
