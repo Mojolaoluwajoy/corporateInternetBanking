@@ -1,5 +1,6 @@
 package org.app.corporateinternetbanking.transaction.service;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
 import org.app.corporateinternetbanking.account.exception.UserNotFound;
@@ -72,7 +73,7 @@ Account destinationAccount=accountRepository.findByAccountNumber(request.getDest
         User user=userRepository.findById(request.getCreatorId())
         .orElseThrow(()->new UserNotFound("This user does not exist"));
 
-if (!user.getRole().equals(UserRole.MAKER)){
+if (!user.getRole().equals(UserRole.MAKER)&&!user.getRole().equals(UserRole.ADMIN)){
     throw new UnauthorizedAccess("the transaction creator must be a MAKER");
 }
         if (request.getAmount().compareTo(java.math.BigDecimal.ZERO)<0){
@@ -107,13 +108,13 @@ if (!user.getRole().equals(UserRole.MAKER)){
         if (request.getStatus() != TransactionStatus.APPROVED && request.getStatus() != TransactionStatus.REJECTED) {
             throw new InvalidStatus("invalid status");
         }
-        transaction.setApprovedBy(user);
+        transaction.setProcessedBy(user);
         if (request.getStatus() == TransactionStatus.REJECTED) {
             transaction.setStatus(TransactionStatus.REJECTED);
             transactionRepository.save(transaction);
             return mapApprovalResponse(transaction);
         }
-        transaction.setApprovedAt(LocalDateTime.now());
+        transaction.setProcessedAt(LocalDateTime.now());
 mapApprovalRequest(request);
         processTransaction(transaction);
         return mapApprovalResponse(transaction);
@@ -220,20 +221,21 @@ log.info("after debit");
 
 
     }
-
+@Transactional
     @Override
     public void expirePendingTransactions() {
        log.info("Processing pending orders");
-        LocalDateTime expirationTime=LocalDateTime.now().minusMinutes(1);
+        LocalDateTime expirationTime=LocalDateTime.now().minusMinutes(60);
         List <Transaction> expiredTransactions=transactionRepository.findByStatusAndCreatedAtBefore(TransactionStatus.PENDING,expirationTime);
 
         for (Transaction transaction:expiredTransactions){
             transaction.setStatus(TransactionStatus.EXPIRED);
-            transaction.setApprovedAt(LocalDateTime.now());
+            transaction.setProcessedAt(LocalDateTime.now());
             log.info("Automatically expired due to time-out");
-        }
-        transactionRepository.saveAll(expiredTransactions);
-    }
+                }
+          }
+
+
 
 
 }

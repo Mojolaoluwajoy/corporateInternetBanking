@@ -21,6 +21,7 @@ import java.util.List;
 public class AccountController {
     @Autowired
     AccountServiceImpl service;
+
     @PostMapping("/create")
     public ResponseEntity<GenericResponse> createAccount(@RequestBody AccountRequest request) throws OrganizationDoesNotExist, UserNotFound, CurrencyNotFound, CurrencyNotActive {
         AccountResponse response=service.createAccount(request);

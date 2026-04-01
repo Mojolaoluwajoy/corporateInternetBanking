@@ -21,8 +21,8 @@ public class ApprovalMap {
         approvalResponse.setConvertedAmount(transaction.getConvertedAmount());
         approvalResponse.setType(transaction.getType());
         approvalResponse.setStatus(transaction.getStatus());
-        approvalResponse.setApprover(new UserIdDto(transaction.getApprovedBy().getId()));
-         approvalResponse.setApprovedAt(transaction.getApprovedAt());
+        approvalResponse.setApprover(new UserIdDto(transaction.getProcessedBy().getId()));
+         approvalResponse.setApprovedAt(transaction.getProcessedAt());
         return approvalResponse;
     }
 }

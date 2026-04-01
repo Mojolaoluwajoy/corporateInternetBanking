@@ -1,5 +1,6 @@
 package org.app.corporateinternetbanking.user.repository;
 
+import org.app.corporateinternetbanking.user.enums.UserRole;
 import org.app.corporateinternetbanking.user.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,4 +16,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByEmail(String email);
 
     Page<User> findByStatus(String status, Pageable pageable);
+
+    Optional <User> findByRole(UserRole userRole);
 }

@@ -21,9 +21,9 @@ public class Transaction {
    private BigDecimal amount;
    private BigDecimal convertedAmount;
    private BigDecimal exchangeRate;
-   @EnumeratedValue
+   @Enumerated(EnumType.STRING)
    private TransactionStatus status=TransactionStatus.PENDING;
-   @EnumeratedValue
+   @Enumerated(EnumType.STRING )
    private TransactionType type;
    @ManyToOne
    @JoinColumn(name = "source_account")
@@ -39,9 +39,9 @@ public class Transaction {
    private User createdBy;
     private LocalDateTime createdAt=LocalDateTime.now();
     @ManyToOne
-    @JoinColumn(name = "approved_by")
-   private User approvedBy;
-    private LocalDateTime approvedAt;
+    @JoinColumn(name = "processed_by")
+   private User processedBy;
+    private LocalDateTime processedAt;
 
 
 }

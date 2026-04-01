@@ -2,7 +2,7 @@ package org.app.corporateinternetbanking.user.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.app.corporateinternetbanking.email.EmailSenderService;
+import org.app.corporateinternetbanking.email.SendEmail;
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;
 import org.app.corporateinternetbanking.organization.model.Organization;
 import org.app.corporateinternetbanking.organization.repository.OrganizationRepository;
@@ -10,8 +10,8 @@ import org.app.corporateinternetbanking.security.JwtService;
 import org.app.corporateinternetbanking.user.dto.*;
 import org.app.corporateinternetbanking.user.enums.UserRole;
 import org.app.corporateinternetbanking.user.enums.UserStatus;
-import org.app.corporateinternetbanking.user.exceptions.UnauthorizedAccess;
 import org.app.corporateinternetbanking.user.exceptions.TokenExpiredOrInvalid;
+import org.app.corporateinternetbanking.user.exceptions.UnauthorizedAccess;
 import org.app.corporateinternetbanking.user.exceptions.UserAlreadyRegistered;
 import org.app.corporateinternetbanking.user.model.User;
 import org.app.corporateinternetbanking.user.repository.UserRepository;
@@ -36,9 +36,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     @Autowired
     private OrganizationRepository organizationRepository;
-    @Autowired
-    private EmailSenderService senderService;
-    PasswordEncoder passwordEncoder;
+     PasswordEncoder passwordEncoder;
     @Autowired
        private JwtService jwtService;
 
@@ -69,7 +67,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String sendInvitationTokenToUser(InvitationRequest invitationRequest){
         String token= jwtService.generateEmailToken(invitationRequest.getUserEmail());
-sendMail(invitationRequest,token);
+ SendEmail.sendMail(invitationRequest,token);
 return invitationRequest.getUserEmail();
     }
 
@@ -120,10 +118,5 @@ return repository.findByStatus(status,pageable);
         return repository.findAll(pageable);
     }
 
-         public void sendMail(InvitationRequest invitationRequest,String token) {
-
-senderService.sendEmail(invitationRequest.getUserEmail(),"Account Creation Token","Your verification token is: \n"+token);
-
 
     }
-}

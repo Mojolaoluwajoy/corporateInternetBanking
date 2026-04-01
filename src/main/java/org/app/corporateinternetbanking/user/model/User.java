@@ -38,7 +38,7 @@ public class User {
     private List<Account> createdAccounts;
     @OneToMany(mappedBy = "createdBy", fetch = FetchType.EAGER)
     private List<Transaction> createdTransactions;
-    @OneToMany(mappedBy = "approvedBy", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "processedBy", fetch = FetchType.EAGER)
     private List<Transaction> createdApprovals;
     private LocalDateTime createdAt = LocalDateTime.now();
 
