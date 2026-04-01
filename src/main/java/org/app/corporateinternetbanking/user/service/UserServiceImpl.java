@@ -2,7 +2,7 @@ package org.app.corporateinternetbanking.user.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.app.corporateinternetbanking.email.SendEmail;
+import org.app.corporateinternetbanking.email.EmailSenderService;
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;
 import org.app.corporateinternetbanking.organization.model.Organization;
 import org.app.corporateinternetbanking.organization.repository.OrganizationRepository;
@@ -39,7 +39,8 @@ public class UserServiceImpl implements UserService {
      PasswordEncoder passwordEncoder;
     @Autowired
        private JwtService jwtService;
-
+@Autowired
+    EmailSenderService senderService;
 
     @Override
     public SuperAdminResponse registerSuperAdmin(SuperAdminRegistrationRequest request) throws UnauthorizedAccess, UserAlreadyRegistered {
@@ -67,7 +68,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String sendInvitationTokenToUser(InvitationRequest invitationRequest){
         String token= jwtService.generateEmailToken(invitationRequest.getUserEmail());
- SendEmail.sendMail(invitationRequest,token);
+        sendMail(invitationRequest,token);
 return invitationRequest.getUserEmail();
     }
 
@@ -118,5 +119,10 @@ return repository.findByStatus(status,pageable);
         return repository.findAll(pageable);
     }
 
+    public  void sendMail(InvitationRequest invitationRequest, String token) {
 
+        senderService.sendEmail(invitationRequest.getUserEmail(), "Account Creation Token", "Your verification token is: \n" + token);
+
+
+    }
     }

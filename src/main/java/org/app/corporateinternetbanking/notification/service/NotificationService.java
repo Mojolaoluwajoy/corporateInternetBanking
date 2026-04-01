@@ -6,5 +6,5 @@ public interface NotificationService {
 
     void createNotification(String recipient,String message);
 
-    void sendNotification(Notification notification);
+    void sendPendingTransactionsNotification(Notification notification);
 }

@@ -7,7 +7,6 @@ import org.app.corporateinternetbanking.account.exception.UserNotFound;
 import org.app.corporateinternetbanking.account.model.Account;
 import org.app.corporateinternetbanking.account.repository.AccountRepository;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
-import org.app.corporateinternetbanking.dto.GenericResponse;
 import org.app.corporateinternetbanking.integration.JsonPlaceRestClientService;
 import org.app.corporateinternetbanking.ledger.enums.EntryType;
 import org.app.corporateinternetbanking.ledger.service.LedgerService;
@@ -55,25 +54,24 @@ JsonPlaceRestClientService currencyService;
     LedgerService ledgerService;
 
     @Override
-    public TransactionResponse initiateTransaction(TransactionRequest request) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess, DuplicateTransaction {
+    public TransactionResponse initiateTransaction(TransactionRequest request) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess, DuplicateTransaction, InsufficientBalance {
     Optional <Transaction> existingTransaction=transactionRepository.findByTransactionReference(request.getTransactionReference());
 
          if (existingTransaction.isPresent()){
-             Transaction transaction= existingTransaction.get();
-             TransactionResponse transactionResponse=mapResponse(transaction);
-             GenericResponse.success(transactionResponse,"Duplicate transfer detected");
-             return transactionResponse;
+            throw  new DuplicateTransaction("Duplicate transaction detected") ;
          }
+if (request.getAmount().compareTo(BigDecimal.ZERO)<=0){
+    throw new InvalidAmount("Amount must be greater than zero");
+}
 
-        Account sourceAccount= accountRepository.findByAccountNumber(request.getSourceAccount())
-              .orElseThrow(()-> new AccountDoesNotExist("This source account does not exist"));
-Account destinationAccount=accountRepository.findByAccountNumber(request.getDestinationAccount())
-        .orElseThrow(()-> new AccountDoesNotExist("This destination account does not exist"));
+        Account destinationAccount=accountRepository.findByAccountNumber(request.getDestinationAccount())
+                .orElseThrow(()->new AccountDoesNotExist("This destination account does not exist"));
+
 
         User user=userRepository.findById(request.getCreatorId())
         .orElseThrow(()->new UserNotFound("This user does not exist"));
 
-if (!user.getRole().equals(UserRole.MAKER)&&!user.getRole().equals(UserRole.ADMIN)){
+if (!user.getRole().equals(UserRole.MAKER)){
     throw new UnauthorizedAccess("the transaction creator must be a MAKER");
 }
         if (request.getAmount().compareTo(java.math.BigDecimal.ZERO)<0){
@@ -81,8 +79,20 @@ if (!user.getRole().equals(UserRole.MAKER)&&!user.getRole().equals(UserRole.ADMI
         }
         Transaction transaction=    mapRequest(request);
         transaction.setCreatedBy(user);
-        transaction.setSourceAccount(sourceAccount);
-        transaction.setDestinationAccount(destinationAccount);
+        if (!request.getType().equals(TransactionType.CREDIT)) {
+
+            Account sourceAccount = accountRepository.findByAccountNumber(request.getSourceAccount())
+                    .orElseThrow(() -> new AccountDoesNotExist("This source account does not exist"));
+            // if (!request.getType().equals(TransactionType.CREDIT)) {
+            if (sourceAccount.getBalance().compareTo(request.getAmount()) < 0) {
+                throw new InsufficientBalance("The balance must be greater than the amount to transfer");
+
+
+            }
+            transaction.setSourceAccount(sourceAccount);
+        }
+            transaction.setDestinationAccount(destinationAccount);
+
         Transaction savedTransaction=transactionRepository.save(transaction);
 
         return mapResponse(savedTransaction);
@@ -90,13 +100,15 @@ if (!user.getRole().equals(UserRole.MAKER)&&!user.getRole().equals(UserRole.ADMI
 
 
     @Override
-    public ApprovalResponse approval(ApprovalRequest request) throws TransactionAlreadyProcessed, TransactionDoesNotExist, InvalidStatus, UnsupportedTransactionType, UserNotFound, UnauthorizedAccess, InvalidAmount, AccountDoesNotExist, CurrencyNotFound {
+    public ApprovalResponse approval(ApprovalRequest request) throws TransactionAlreadyProcessed, TransactionDoesNotExist, InvalidStatus, UnsupportedTransactionType, UserNotFound, UnauthorizedAccess, InvalidAmount, AccountDoesNotExist, CurrencyNotFound, InsufficientBalance {
         Transaction transaction = transactionRepository.findById(request.getTransactionId())
                 .orElseThrow(() -> new TransactionDoesNotExist("This transaction does not exist"));
-        if (transaction.getAmount().compareTo(transaction.getSourceAccount().getBalance())<0) {
-            transaction.setStatus(TransactionStatus.REJECTED);
-            throw new InvalidAmount("Insufficient balance");
-        }
+if (!transaction.getType().equals(TransactionType.CREDIT)) {
+    if (transaction.getAmount().compareTo(transaction.getSourceAccount().getBalance()) < 0) {
+        transaction.setStatus(TransactionStatus.REJECTED);
+        throw new InsufficientBalance("The balance must be more than the amount to transfer");
+    }
+}
         User user = userRepository.findById(request.getApproverId())
                 .orElseThrow(() -> new UserNotFound("This user does not exist"));
         if (!user.getRole().equals(UserRole.APPROVER)) {
@@ -233,8 +245,8 @@ log.info("after debit");
             transaction.setProcessedAt(LocalDateTime.now());
             log.info("Automatically expired due to time-out");
                 }
-          }
 
+    }
 
 
 

@@ -1,13 +1,17 @@
 package org.app.corporateinternetbanking.notification.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.app.corporateinternetbanking.email.EmailSenderService;
 import org.app.corporateinternetbanking.notification.NotificationStatus;
 import org.app.corporateinternetbanking.notification.model.Notification;
 import org.app.corporateinternetbanking.notification.repository.NotificationRepository;
+import org.app.corporateinternetbanking.transaction.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+
+@Slf4j
 @Service
 public class NotificationServiceImpl implements NotificationService {
 
@@ -15,6 +19,8 @@ public class NotificationServiceImpl implements NotificationService {
     NotificationRepository notificationRepository;
     @Autowired
     EmailSenderService emailSenderService;
+    @Autowired
+    TransactionRepository  transactionRepository;
     @Override
     public void createNotification(String recipient, String message) {
         Notification notification=new Notification();
@@ -27,10 +33,16 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void sendNotification(Notification notification) {
-emailSenderService.sendEmail(notification.getRecipient(),"pending transactions alert",notification.getMessage());
-   notification.setStatus(NotificationStatus.PENDING);
-   notification.setSentAt(LocalDateTime.now());
-
+    public void sendPendingTransactionsNotification(Notification notification) {
+try {
+    emailSenderService.sendEmail(notification.getRecipient(), "pending transactions alert", notification.getMessage());
+    notification.setStatus(NotificationStatus.SENT);
+    notification.setSentAt(LocalDateTime.now());
+}catch (Exception e){
+    log.error("Email failed",e);
+}
     }
+
+
+
 }

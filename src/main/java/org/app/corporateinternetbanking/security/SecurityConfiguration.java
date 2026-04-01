@@ -37,7 +37,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/organizations/findBy","/organization/viewAll").hasRole(UserRole.SUPER_ADMIN.name())
                         .requestMatchers("/organizations/approve/").hasRole(UserRole.SUPER_ADMIN.name())
                         .requestMatchers("/accounts/create/").hasRole(UserRole.ADMIN.name())
-                      .requestMatchers("/transactions/initiate").hasAnyRole(UserRole.MAKER.name(),UserRole.ADMIN.name())
+                      .requestMatchers("/transactions/initiate").hasRole(UserRole.MAKER.name())
                         .requestMatchers("/transactions/approve").hasRole(UserRole.APPROVER.name())
                       .requestMatchers("/transactions/pending").hasAnyRole(UserRole.APPROVER.name(),UserRole.ADMIN.name())
                        .requestMatchers("/currencies/status/").hasRole(UserRole.SUPER_ADMIN.name())

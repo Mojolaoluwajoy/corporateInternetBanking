@@ -22,6 +22,7 @@ public interface TransactionRepository extends JpaRepository<Transaction,Long> {
 
     List<Transaction> findByStatusAndCreatedAtBefore(TransactionStatus status, LocalDateTime time);
 
-
+List<Transaction> findByCreatedAtBetween(LocalDateTime start,LocalDateTime end);
+List<Transaction> findByCreatedAtBetweenAndStatus(LocalDateTime start,LocalDateTime end,TransactionStatus status);
 
 }

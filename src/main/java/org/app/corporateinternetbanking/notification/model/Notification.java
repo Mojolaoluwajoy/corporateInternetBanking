@@ -15,6 +15,7 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String recipient;
+    @Column(length =1000)
     private String message;
     @Enumerated(EnumType.STRING)
     private NotificationStatus status;

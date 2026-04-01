@@ -6,6 +6,7 @@ import org.app.corporateinternetbanking.account.exception.UserNotFound;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotActive;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
 import org.app.corporateinternetbanking.dto.GenericResponse;
+import org.app.corporateinternetbanking.notification.exceptions.NoPendingNotifications;
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationAlreadyProcessed;
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;
 import org.app.corporateinternetbanking.transaction.exceptions.*;
@@ -103,6 +104,16 @@ public class GlobalExceptionHandler {
 }@ExceptionHandler(CurrencyNotActive.class)
     public ResponseEntity<GenericResponse> handleCurrencyNotActive(CurrencyNotActive exception){
     log.error("Inactive currency: {}",exception.getMessage());
+    return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
+}
+@ExceptionHandler(InsufficientBalance.class)
+    public ResponseEntity<GenericResponse> handleInsufficientBalance(InsufficientBalance exception){
+    log.error("Insufficient balance: {}",exception.getMessage());
+    return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
+}
+@ExceptionHandler(NoPendingNotifications.class)
+    public ResponseEntity<GenericResponse> handleNoPendingNotifications(NoPendingNotifications exception){
+    log.error("No pending notifications: {}",exception.getMessage());
     return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
 }
 
