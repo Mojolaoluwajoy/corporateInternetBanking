@@ -79,18 +79,18 @@ if (!user.getRole().equals(UserRole.MAKER)){
         }
         Transaction transaction=    mapRequest(request);
         transaction.setCreatedBy(user);
-        if (!request.getType().equals(TransactionType.CREDIT)) {
+        //if (!request.getType().equals(TransactionType.CREDIT)) {
 
             Account sourceAccount = accountRepository.findByAccountNumber(request.getSourceAccount())
                     .orElseThrow(() -> new AccountDoesNotExist("This source account does not exist"));
             // if (!request.getType().equals(TransactionType.CREDIT)) {
-            if (sourceAccount.getBalance().compareTo(request.getAmount()) < 0) {
+            if (request.getAmount().compareTo(sourceAccount.getBalance()) > 0) {
                 throw new InsufficientBalance("The balance must be greater than the amount to transfer");
 
 
             }
             transaction.setSourceAccount(sourceAccount);
-        }
+        //}
             transaction.setDestinationAccount(destinationAccount);
 
         Transaction savedTransaction=transactionRepository.save(transaction);
@@ -103,12 +103,12 @@ if (!user.getRole().equals(UserRole.MAKER)){
     public ApprovalResponse approval(ApprovalRequest request) throws TransactionAlreadyProcessed, TransactionDoesNotExist, InvalidStatus, UnsupportedTransactionType, UserNotFound, UnauthorizedAccess, InvalidAmount, AccountDoesNotExist, CurrencyNotFound, InsufficientBalance {
         Transaction transaction = transactionRepository.findById(request.getTransactionId())
                 .orElseThrow(() -> new TransactionDoesNotExist("This transaction does not exist"));
-if (!transaction.getType().equals(TransactionType.CREDIT)) {
-    if (transaction.getAmount().compareTo(transaction.getSourceAccount().getBalance()) < 0) {
+//if (!transaction.getType().equals(TransactionType.CREDIT)) {
+    if (transaction.getAmount().compareTo(transaction.getSourceAccount().getBalance()) >0) {
         transaction.setStatus(TransactionStatus.REJECTED);
         throw new InsufficientBalance("The balance must be more than the amount to transfer");
     }
-}
+//}
         User user = userRepository.findById(request.getApproverId())
                 .orElseThrow(() -> new UserNotFound("This user does not exist"));
         if (!user.getRole().equals(UserRole.APPROVER)) {
@@ -134,8 +134,8 @@ mapApprovalRequest(request);
 
     private void processTransaction(Transaction transaction) throws CurrencyNotFound {
         switch(transaction.getType()){
-            case DEBIT -> processDebit(transaction);
-            case CREDIT -> processCredit(transaction);
+//            case DEBIT -> processDebit(transaction);
+//            case CREDIT -> processCredit(transaction);
             case TRANSFER -> processTransfer(transaction);
         }
         transaction.setStatus(TransactionStatus.APPROVED);
@@ -180,35 +180,35 @@ log.info("after debit");
         return mapApprovalResponse(transaction);
     }
 
-    private ApprovalResponse processCredit(Transaction transaction) {
-        transaction.setType(TransactionType.CREDIT);
-        Account destination=transaction.getDestinationAccount();
-        BigDecimal newBalance = destination.getBalance().add(transaction.getAmount());
-      destination.setBalance(newBalance);
-         ledgerService.createEntry(destination,transaction,EntryType.CREDIT,destination.getCurrency().getCode(),transaction.getAmount(),destination.getBalance());
+//    private ApprovalResponse processCredit(Transaction transaction) {
+//        transaction.setType(TransactionType.CREDIT);
+//        Account destination=transaction.getDestinationAccount();
+//        BigDecimal newBalance = destination.getBalance().add(transaction.getAmount());
+//      destination.setBalance(newBalance);
+//         ledgerService.createEntry(destination,transaction,EntryType.CREDIT,destination.getCurrency().getCode(),transaction.getAmount(),destination.getBalance());
+//
+//        accountRepository.save(destination);
+//
+//        transaction.setUpdatedBalance(newBalance);
+//        transaction = transactionRepository.save(transaction);
+//        return   mapApprovalResponse(transaction);
+//
+//    }
+//
+//    private ApprovalResponse processDebit(Transaction transaction) {
+//     Account source=transaction.getSourceAccount();
+//      BigDecimal  newBalance = source.getBalance().subtract(transaction.getAmount());
+//       source.setBalance(newBalance);
+//       transaction.setType(TransactionType.DEBIT);
+//        ledgerService.createEntry(source,transaction,EntryType.DEBIT,source.getCurrency().getCode(),transaction.getAmount(),source.getBalance());
+//
+//        accountRepository.save(source);
 
-        accountRepository.save(destination);
-
-        transaction.setUpdatedBalance(newBalance);
-        transaction = transactionRepository.save(transaction);
-        return   mapApprovalResponse(transaction);
-
-    }
-
-    private ApprovalResponse processDebit(Transaction transaction) {
-     Account source=transaction.getSourceAccount();
-      BigDecimal  newBalance = source.getBalance().subtract(transaction.getAmount());
-       source.setBalance(newBalance);
-       transaction.setType(TransactionType.DEBIT);
-        ledgerService.createEntry(source,transaction,EntryType.DEBIT,source.getCurrency().getCode(),transaction.getAmount(),source.getBalance());
-
-        accountRepository.save(source);
-
-        transaction.setUpdatedBalance(newBalance);
-        transaction = transactionRepository.save(transaction);
-        return   mapApprovalResponse(transaction);
-
-    }
+//        transaction.setUpdatedBalance(newBalance);
+//        transaction = transactionRepository.save(transaction);
+//        return   mapApprovalResponse(transaction);
+//
+//    }
 
     @Override
     public List<TransactionResponse> viewPendingTransactions() throws NoPendingTransactionFound {
@@ -237,7 +237,7 @@ log.info("after debit");
     @Override
     public void expirePendingTransactions() {
        log.info("Processing pending orders");
-        LocalDateTime expirationTime=LocalDateTime.now().minusMinutes(60);
+        LocalDateTime expirationTime=LocalDateTime.now().minusHours(24);
         List <Transaction> expiredTransactions=transactionRepository.findByStatusAndCreatedAtBefore(TransactionStatus.PENDING,expirationTime);
 
         for (Transaction transaction:expiredTransactions){

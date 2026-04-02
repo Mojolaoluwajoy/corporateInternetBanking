@@ -27,12 +27,12 @@ public class TransactionJobs {
     private final UserRepository  userRepository;
     private final NotificationService  notificationService;
 
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(cron = "0 0 * * * *")
     public void runExpirationJob() {
         transactionService.expirePendingTransactions();
     }
 
-    @Scheduled(fixedDelayString ="${transaction,jobs.interval}")
+    @Scheduled(cron = "0 0 0 * * *")
     public  void checkPendingTransactions() throws NoAdminsPresent {
         log.info("checking pending transactions");
         LocalDateTime threshold=LocalDateTime.now().minusSeconds(10);
@@ -47,7 +47,7 @@ public class TransactionJobs {
        notificationService.createNotification(adminEmail,message);
    }
     }
-    @Scheduled(fixedRateString ="${transaction,jobs.interval}")
+    @Scheduled(cron = "0 0 0 * * *")
     public  void buildDailyReports() throws NoAdminsPresent {
         log.info("building daily reports");
         LocalDateTime start=LocalDateTime.now().minusHours(24);
@@ -93,7 +93,7 @@ public class TransactionJobs {
         List<Transaction> rejectedTransactions=transactionRepository.findByCreatedAtBetweenAndStatus(start,end,TransactionStatus.REJECTED);
         message.append("Daily summary report\n\n");
         message.append("Total Transactions: ").append(transactions.size()).append("\n\n");
-        message.append("Total Transaction volume: ").append(transactionVolume).append("\n\n");
+      message.append("Total Transaction volume: ").append(transactionVolume).append("\n\n");
         message.append("Total pending transactions: ").append(pendingTransactions.size()).append("\n\n");
         message.append("Total successful transactions:").append(successfulTransactions.size()).append("\n\n");
         message.append("Total expired transactions: ").append(expiredTransactions.size()).append("\n\n");

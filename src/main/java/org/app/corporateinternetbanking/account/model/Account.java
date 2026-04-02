@@ -28,7 +28,7 @@ public class Account {
     @PrePersist
     public void prePersist(){
         if (balance==null){
-            balance=BigDecimal.ZERO;
+            balance=BigDecimal.valueOf(10000);
         }
     }
     private String type;
@@ -46,4 +46,8 @@ public class Account {
    @JoinColumn(name = "created_by")
     private User createdBy;
    private LocalDateTime createdAt=LocalDateTime.now();
+   private boolean flagged;
+   private void onCreate(){
+       this.flagged=false;
+   }
 }
