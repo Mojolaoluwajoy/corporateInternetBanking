@@ -7,12 +7,10 @@ import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoes
 import org.app.corporateinternetbanking.organization.model.Organization;
 import org.app.corporateinternetbanking.organization.repository.OrganizationRepository;
 import org.app.corporateinternetbanking.security.JwtService;
-import org.app.corporateinternetbanking.user.dto.InvitationRequest;
-import org.app.corporateinternetbanking.user.dto.PasswordResetRequest;
-import org.app.corporateinternetbanking.user.dto.UserRegistrationRequest;
-import org.app.corporateinternetbanking.user.dto.UserResponse;
+import org.app.corporateinternetbanking.user.dto.*;
 import org.app.corporateinternetbanking.user.enums.UserStatus;
 import org.app.corporateinternetbanking.user.exceptions.IncorrectPassword;
+import org.app.corporateinternetbanking.user.exceptions.InvalidEmail;
 import org.app.corporateinternetbanking.user.exceptions.TokenExpiredOrInvalid;
 import org.app.corporateinternetbanking.user.exceptions.UserAlreadyRegistered;
 import org.app.corporateinternetbanking.user.model.User;
@@ -112,8 +110,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void forgotPassword() {
+    public String resetForgottenPassword(ForgotPasswordRequest forgotPasswordRequest) throws InvalidEmail, TokenExpiredOrInvalid {
+        User user = repository.findByEmail(forgotPasswordRequest.getEmail())
+                .orElseThrow(() -> new InvalidEmail("Email not found"));
+        if (!jwtService.isEmailTokenValid(forgotPasswordRequest.getToken())) {
+            throw new TokenExpiredOrInvalid("Token expired or its invalid");
+        }
+        user.setPassword(forgotPasswordRequest.getNewPassword());
+        repository.save(user);
+        return "Password reset successful";
+    }
 
+
+    @Override
+    public String sendForgotPasswordToken(String email) throws InvalidEmail {
+        User user = repository.findByEmail(email)
+                .orElseThrow(() -> new InvalidEmail("Email not found"));
+        String token = jwtService.generateEmailToken(email);
+        senderService.sendEmail(user.getEmail(), "Password reset token", "Your password reset token is: \n" + token);
+        return "Check your email";
     }
 
 

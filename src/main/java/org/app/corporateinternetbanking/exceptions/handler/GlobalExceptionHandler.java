@@ -10,10 +10,7 @@ import org.app.corporateinternetbanking.notification.exceptions.NoPendingNotific
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationAlreadyProcessed;
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;
 import org.app.corporateinternetbanking.transaction.exceptions.*;
-import org.app.corporateinternetbanking.user.exceptions.IncorrectPassword;
-import org.app.corporateinternetbanking.user.exceptions.TokenExpiredOrInvalid;
-import org.app.corporateinternetbanking.user.exceptions.UnauthorizedAccess;
-import org.app.corporateinternetbanking.user.exceptions.UserAlreadyRegistered;
+import org.app.corporateinternetbanking.user.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -135,6 +132,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IncorrectPassword.class)
     public ResponseEntity<GenericResponse> handleIncorrectPassword(IncorrectPassword exception) {
         log.error("Incorrect password: {}", exception.getMessage());
+        return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidEmail.class)
+    public ResponseEntity<GenericResponse> handleInvalidEmail(InvalidEmail exception) {
+        log.error("Invalid Email: {}", exception.getMessage());
         return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
 

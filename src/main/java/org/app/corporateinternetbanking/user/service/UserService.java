@@ -1,11 +1,9 @@
 package org.app.corporateinternetbanking.user.service;
 
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;
-import org.app.corporateinternetbanking.user.dto.InvitationRequest;
-import org.app.corporateinternetbanking.user.dto.PasswordResetRequest;
-import org.app.corporateinternetbanking.user.dto.UserRegistrationRequest;
-import org.app.corporateinternetbanking.user.dto.UserResponse;
+import org.app.corporateinternetbanking.user.dto.*;
 import org.app.corporateinternetbanking.user.exceptions.IncorrectPassword;
+import org.app.corporateinternetbanking.user.exceptions.InvalidEmail;
 import org.app.corporateinternetbanking.user.exceptions.TokenExpiredOrInvalid;
 import org.app.corporateinternetbanking.user.exceptions.UserAlreadyRegistered;
 import org.app.corporateinternetbanking.user.model.User;
@@ -27,6 +25,8 @@ public interface UserService {
 
     String resetPassword(PasswordResetRequest passwordResetRequest) throws IncorrectPassword;
 
-    void forgotPassword();
+    String resetForgottenPassword(ForgotPasswordRequest forgotPasswordRequest) throws InvalidEmail, TokenExpiredOrInvalid;
+
+    String sendForgotPasswordToken(String email) throws InvalidEmail;
 
 }

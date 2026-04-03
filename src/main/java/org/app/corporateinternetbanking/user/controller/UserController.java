@@ -3,12 +3,13 @@ package org.app.corporateinternetbanking.user.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.app.corporateinternetbanking.commons.GenericResponse;
+import org.app.corporateinternetbanking.user.dto.ForgotPasswordRequest;
 import org.app.corporateinternetbanking.user.dto.InvitationRequest;
 import org.app.corporateinternetbanking.user.dto.PasswordResetRequest;
 import org.app.corporateinternetbanking.user.dto.UserResponse;
 import org.app.corporateinternetbanking.user.exceptions.IncorrectPassword;
-import org.app.corporateinternetbanking.user.exceptions.UnauthorizedAccess;
-import org.app.corporateinternetbanking.user.exceptions.UserAlreadyRegistered;
+import org.app.corporateinternetbanking.user.exceptions.InvalidEmail;
+import org.app.corporateinternetbanking.user.exceptions.TokenExpiredOrInvalid;
 import org.app.corporateinternetbanking.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,7 @@ public class UserController {
 
     @Operation(summary = "Send user creation token invitation to email")
     @PostMapping("/invitation")
-    public ResponseEntity<GenericResponse> sendInvitation(@RequestBody InvitationRequest request) throws UserAlreadyRegistered, UnauthorizedAccess {
+    public ResponseEntity<GenericResponse> sendInvitation(@RequestBody InvitationRequest request) {
         String email = service.sendInvitationTokenToUser(request);
         return new ResponseEntity<>(GenericResponse.success(email, "token successfully sent"), HttpStatus.CREATED);
 
@@ -34,8 +35,22 @@ public class UserController {
 
     @Operation(summary = "Reset password")
     @PostMapping("/password/reset")
-    public ResponseEntity<GenericResponse> resetPassword(@RequestBody PasswordResetRequest resetRequest) throws UserAlreadyRegistered, UnauthorizedAccess, IncorrectPassword {
+    public ResponseEntity<GenericResponse> resetPassword(@RequestBody PasswordResetRequest resetRequest) throws IncorrectPassword {
         return new ResponseEntity<>(GenericResponse.success(service.resetPassword(resetRequest), "Your password has been reset"), HttpStatus.CREATED);
+
+    }
+
+    @Operation(summary = "Send forgotten password reset token")
+    @PostMapping("/password/token")
+    public ResponseEntity<GenericResponse> resetToken(@RequestBody String email) throws InvalidEmail {
+        return new ResponseEntity<>(GenericResponse.success(service.sendForgotPasswordToken(email), "A token has bee sent to your email"), HttpStatus.CREATED);
+
+    }
+
+    @Operation(summary = "Reset forgotten password")
+    @PostMapping("/forgotten/password")
+    public ResponseEntity<GenericResponse> resetForgottenPassword(@RequestBody ForgotPasswordRequest resetRequest) throws InvalidEmail, TokenExpiredOrInvalid {
+        return new ResponseEntity<>(GenericResponse.success(service.resetForgottenPassword(resetRequest), "Your password has been reset"), HttpStatus.CREATED);
 
     }
 
