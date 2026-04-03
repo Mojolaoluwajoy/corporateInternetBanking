@@ -19,7 +19,7 @@ public class NotificationDispatcher {
     private final NotificationRepository  notificationRepository;
     private final NotificationService  notificationService;
 
-    @Scheduled(fixedDelayString = "${notification.jobs.interval}")
+    @Scheduled(cron = "0 0 0 * * *")
     public void dispatchNotification() throws NoPendingNotifications {
 
         log.info("dispatching notifications");

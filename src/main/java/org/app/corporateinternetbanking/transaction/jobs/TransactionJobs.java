@@ -32,10 +32,10 @@ public class TransactionJobs {
         transactionService.expirePendingTransactions();
     }
 
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 0 * * * *")
     public  void checkPendingTransactions() throws NoAdminsPresent {
         log.info("checking pending transactions");
-        LocalDateTime threshold=LocalDateTime.now().minusSeconds(10);
+        LocalDateTime threshold=LocalDateTime.now().minusHours(10);
 
         List<Transaction> pending=transactionRepository.findByStatusAndCreatedAtBefore(TransactionStatus.PENDING,threshold);
     User user=userRepository.findByRole(UserRole.ADMIN)
@@ -86,14 +86,15 @@ public class TransactionJobs {
             LocalDateTime start=LocalDateTime.now();
         LocalDateTime end=LocalDateTime.now().minusHours(24);
         List<Transaction> transactions=transactionRepository.findByCreatedAtBetween(start,end);
-        BigDecimal transactionVolume=transactionRepository.getTotalVolume(start,end);
+        // BigDecimal transactionVolume=transactionRepository.getTotalVolume(start,end);
+       BigDecimal volume=transactionService.calculateTransactionVolume();
         List<Transaction> pendingTransactions=transactionRepository.findByCreatedAtBetweenAndStatus(start,end,TransactionStatus.PENDING);
         List<Transaction> successfulTransactions=transactionRepository.findByCreatedAtBetweenAndStatus(start,end,TransactionStatus.APPROVED);
         List<Transaction> expiredTransactions=transactionRepository.findByCreatedAtBetweenAndStatus(start,end,TransactionStatus.EXPIRED);
         List<Transaction> rejectedTransactions=transactionRepository.findByCreatedAtBetweenAndStatus(start,end,TransactionStatus.REJECTED);
         message.append("Daily summary report\n\n");
         message.append("Total Transactions: ").append(transactions.size()).append("\n\n");
-      message.append("Total Transaction volume: ").append(transactionVolume).append("\n\n");
+      message.append("Total Transaction volume: ").append(volume).append("\n\n");
         message.append("Total pending transactions: ").append(pendingTransactions.size()).append("\n\n");
         message.append("Total successful transactions:").append(successfulTransactions.size()).append("\n\n");
         message.append("Total expired transactions: ").append(expiredTransactions.size()).append("\n\n");

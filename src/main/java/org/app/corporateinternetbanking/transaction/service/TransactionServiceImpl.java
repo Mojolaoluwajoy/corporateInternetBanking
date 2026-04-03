@@ -248,6 +248,20 @@ log.info("after debit");
 
     }
 
+  @Override
+  public BigDecimal calculateTransactionVolume() {
+       log.info("Calculating 24 hours window transaction volume");
+        LocalDateTime end=LocalDateTime.now().minusHours(24);
+        LocalDateTime start=LocalDateTime.now();
+        List <Transaction> expiredTransactions=transactionRepository.findByCreatedAtBetweenAndStatus(start,end,TransactionStatus.APPROVED);
+BigDecimal transactionVolume=BigDecimal.ZERO;
+        for (Transaction transaction:expiredTransactions) {
+                transactionVolume= transactionVolume.add(transaction.getAmount());
+            }
+
+     return transactionVolume;
+  }
+
 
 
 }

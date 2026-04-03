@@ -15,22 +15,19 @@ import java.util.Optional;
 public interface TransactionRepository extends JpaRepository<Transaction,Long> {
 
 
-     List<Transaction> findByStatus(TransactionStatus status);
+    List<Transaction> findByStatus(TransactionStatus status);
 
-  Optional<Transaction> findByTransactionReference(String transactionReference);
+    Optional<Transaction> findByTransactionReference(String transactionReference);
 
 
-    Page <Transaction> findByStatus(String status,Pageable pageable);
+    Page<Transaction> findByStatus(String status, Pageable pageable);
 
     List<Transaction> findByStatusAndCreatedAtBefore(TransactionStatus status, LocalDateTime time);
 
-List<Transaction> findByCreatedAtBetween(LocalDateTime start,LocalDateTime end);
-List<Transaction> findByCreatedAtBetweenAndStatus(LocalDateTime start,LocalDateTime end,TransactionStatus status);
+    List<Transaction> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+
+    List<Transaction> findByCreatedAtBetweenAndStatus(LocalDateTime start, LocalDateTime end, TransactionStatus status);
 
 
-@Query("""
-SELECT COALESCE(SUM(t.amount), 0)
-From Transaction t
-WHERE t.createdAt BETWEEN :start AND:end""")
-    BigDecimal getTotalVolume(LocalDateTime start,LocalDateTime end);
+
 }

@@ -12,6 +12,7 @@ import org.app.corporateinternetbanking.transaction.model.Transaction;
 import org.app.corporateinternetbanking.user.exceptions.UnauthorizedAccess;
 import org.springframework.data.domain.Page;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface TransactionService {
@@ -26,4 +27,5 @@ public interface TransactionService {
 
        void expirePendingTransactions();
 
-       }
+    BigDecimal calculateTransactionVolume();
+}

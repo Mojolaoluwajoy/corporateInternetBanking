@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class AuditJob {
     private final AuditService auditService;
 
-    @Scheduled( fixedDelay = 5000)//cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void runAudit(){
         log.info("Running balance auditing");
         auditService.auditBalances();
