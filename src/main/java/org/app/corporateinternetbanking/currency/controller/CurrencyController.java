@@ -1,5 +1,7 @@
 package org.app.corporateinternetbanking.currency.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.app.corporateinternetbanking.currency.dto.CurrencyRequest;
 import org.app.corporateinternetbanking.currency.dto.CurrencyResponse;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
@@ -15,10 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/currencies")
+@Tag(name = "Currency API",description = "Handles currencies")
+
 public class CurrencyController {
     @Autowired
     CurrencyService currencyService;
 
+    @Operation(summary = "Change the status of a currency")
     @PostMapping("/status")
     public ResponseEntity<GenericResponse> changeStatus(@RequestBody CurrencyRequest request) throws CurrencyNotFound {
         CurrencyResponse response=currencyService.changeCurrencyStatus(request);

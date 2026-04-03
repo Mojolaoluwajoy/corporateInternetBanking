@@ -1,5 +1,7 @@
 package org.app.corporateinternetbanking.organization.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.app.corporateinternetbanking.account.exception.UserNotFound;
 import org.app.corporateinternetbanking.dto.GenericResponse;
 import org.app.corporateinternetbanking.organization.dto.*;
@@ -16,22 +18,24 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/organizations")
+@Tag(name= "Organization API",description = "Handles organizations")
 public class OrganizationController {
     @Autowired
     OrganizationService service;
 
-
+    @Operation(summary = "Send organization and admin registration request")
     @PostMapping("/create")
     public ResponseEntity<GenericResponse> createOrganization(@RequestBody OrganizationRequest request) throws UserAlreadyRegistered {
        OrganizationRegistrationResponse response=service.registerOrganization(request);
         return new ResponseEntity<>(GenericResponse.success(response,"Organization registration complete,awaiting approval"), HttpStatus.OK);
     }
-
+    @Operation(summary ="Approve organization and admin registration request")
     @PostMapping("/approve")
     public ResponseEntity<GenericResponse> approveOrganization(@RequestBody ApprovalRequest request) throws UserAlreadyRegistered, UserNotFound, OrganizationAlreadyProcessed, OrganizationDoesNotExist {
       ApprovalResponse  response=service.processOrganizationRegistration(request);
         return new ResponseEntity<>(GenericResponse.success(response,"Organization successfully processed"), HttpStatus.OK);
     }
+    @Operation(summary ="Find an organization by id")
     @PostMapping("/findBy")
     public ResponseEntity<GenericResponse> findById(@RequestBody Long id)throws OrganizationDoesNotExist {
         OrganizationOnlyResponse  response= null;
@@ -40,6 +44,7 @@ public class OrganizationController {
 
         return new ResponseEntity<>(GenericResponse.success(response,"Organization with the specified id found"),HttpStatus.OK);
     }
+    @Operation(summary ="View all organizations")
     @GetMapping("/viewAll")
     public ResponseEntity<GenericResponse> viewAll(){
         List<OrganizationOnlyResponse> response=service.viewAll();

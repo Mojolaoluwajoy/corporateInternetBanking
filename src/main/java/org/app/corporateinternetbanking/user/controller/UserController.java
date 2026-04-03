@@ -1,5 +1,7 @@
 package org.app.corporateinternetbanking.user.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.app.corporateinternetbanking.dto.GenericResponse;
 import org.app.corporateinternetbanking.user.dto.InvitationRequest;
 import org.app.corporateinternetbanking.user.dto.UserResponse;
@@ -15,10 +17,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@Tag(name= "Users API",description = "Handles users")
 public class UserController {
     @Autowired
     UserService service;
 
+    @Operation(summary = "Send user creation token invitation to email")
     @PostMapping("/invitation")
     public ResponseEntity<GenericResponse> sendInvitation(@RequestBody InvitationRequest  request)throws UserAlreadyRegistered, UnauthorizedAccess {
       String email=  service.sendInvitationTokenToUser(request);
@@ -26,12 +30,15 @@ public class UserController {
 
     }
 
+    @Operation(summary = "view all users")
     @GetMapping("/viewAll")
     public ResponseEntity<GenericResponse> viewAlUsers() {
         List<UserResponse> users = service.ViewAllUsers();
         return new ResponseEntity<>(GenericResponse.success(users, "Users found"), HttpStatus.OK);
     }
-   @GetMapping("/users")
+
+    @Operation(summary = "Pageable view of users")
+    @GetMapping("/users")
            public ResponseEntity<GenericResponse> getUsers(@RequestParam int page,@RequestParam int size,@RequestParam (required = false) String status){
        return new ResponseEntity<>(GenericResponse.success(service.viewByStatus(page,size,status),"Users found"),HttpStatus.OK);
 

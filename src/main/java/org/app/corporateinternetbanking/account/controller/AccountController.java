@@ -1,5 +1,7 @@
 package org.app.corporateinternetbanking.account.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
 import org.app.corporateinternetbanking.account.exception.UserNotFound;
 import org.app.corporateinternetbanking.account.service.AccountServiceImpl;
@@ -18,15 +20,19 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/accounts")
+@Tag(name = "Account API",description = "Handles accounts")
 public class AccountController {
     @Autowired
     AccountServiceImpl service;
 
+    @Operation(summary = "Create account")
     @PostMapping("/create")
     public ResponseEntity<GenericResponse> createAccount(@RequestBody AccountRequest request) throws OrganizationDoesNotExist, UserNotFound, CurrencyNotFound, CurrencyNotActive {
         AccountResponse response=service.createAccount(request);
         return new ResponseEntity<>(GenericResponse.success(response,"Account successfully registered"), HttpStatus.OK);
     }
+
+    @Operation(summary = "Find account by id")
     @PostMapping("/find")
     public ResponseEntity<GenericResponse> findById(@RequestBody Long id)throws AccountDoesNotExist {
         AccountResponse response= null;
@@ -35,6 +41,8 @@ public class AccountController {
 
         return new ResponseEntity<>(GenericResponse.success(response,"Account with the specified id found"),HttpStatus.OK);
     }
+
+    @Operation(summary = "View all accounts")
     @GetMapping("/all")
     public ResponseEntity<GenericResponse> viewAll(){
      List<AccountResponse> response=service.viewAll();
