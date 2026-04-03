@@ -2,9 +2,11 @@ package org.app.corporateinternetbanking.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.app.corporateinternetbanking.dto.GenericResponse;
+import org.app.corporateinternetbanking.commons.GenericResponse;
 import org.app.corporateinternetbanking.user.dto.InvitationRequest;
+import org.app.corporateinternetbanking.user.dto.PasswordResetRequest;
 import org.app.corporateinternetbanking.user.dto.UserResponse;
+import org.app.corporateinternetbanking.user.exceptions.IncorrectPassword;
 import org.app.corporateinternetbanking.user.exceptions.UnauthorizedAccess;
 import org.app.corporateinternetbanking.user.exceptions.UserAlreadyRegistered;
 import org.app.corporateinternetbanking.user.service.UserService;
@@ -17,16 +19,23 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
-@Tag(name= "Users API",description = "Handles users")
+@Tag(name = "Users API", description = "Handles users")
 public class UserController {
     @Autowired
     UserService service;
 
     @Operation(summary = "Send user creation token invitation to email")
     @PostMapping("/invitation")
-    public ResponseEntity<GenericResponse> sendInvitation(@RequestBody InvitationRequest  request)throws UserAlreadyRegistered, UnauthorizedAccess {
-      String email=  service.sendInvitationTokenToUser(request);
-        return new ResponseEntity<>(GenericResponse.success(email,"token successfully sent"), HttpStatus.CREATED);
+    public ResponseEntity<GenericResponse> sendInvitation(@RequestBody InvitationRequest request) throws UserAlreadyRegistered, UnauthorizedAccess {
+        String email = service.sendInvitationTokenToUser(request);
+        return new ResponseEntity<>(GenericResponse.success(email, "token successfully sent"), HttpStatus.CREATED);
+
+    }
+
+    @Operation(summary = "Reset password")
+    @PostMapping("/password/reset")
+    public ResponseEntity<GenericResponse> resetPassword(@RequestBody PasswordResetRequest resetRequest) throws UserAlreadyRegistered, UnauthorizedAccess, IncorrectPassword {
+        return new ResponseEntity<>(GenericResponse.success(service.resetPassword(resetRequest), "Your password has been reset"), HttpStatus.CREATED);
 
     }
 
@@ -39,8 +48,8 @@ public class UserController {
 
     @Operation(summary = "Pageable view of users")
     @GetMapping("/users")
-           public ResponseEntity<GenericResponse> getUsers(@RequestParam int page,@RequestParam int size,@RequestParam (required = false) String status){
-       return new ResponseEntity<>(GenericResponse.success(service.viewByStatus(page,size,status),"Users found"),HttpStatus.OK);
+    public ResponseEntity<GenericResponse> getUsers(@RequestParam int page, @RequestParam int size, @RequestParam(required = false) String status) {
+        return new ResponseEntity<>(GenericResponse.success(service.viewByStatus(page, size, status), "Users found"), HttpStatus.OK);
 
     }
 }

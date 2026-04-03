@@ -9,7 +9,7 @@ import org.app.corporateinternetbanking.account.dto.AccountRequest;
 import org.app.corporateinternetbanking.account.dto.AccountResponse;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotActive;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
-import org.app.corporateinternetbanking.dto.GenericResponse;
+import org.app.corporateinternetbanking.commons.GenericResponse;
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

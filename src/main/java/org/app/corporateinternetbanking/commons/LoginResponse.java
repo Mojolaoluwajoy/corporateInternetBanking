@@ -1,4 +1,4 @@
-package org.app.corporateinternetbanking.dto;
+package org.app.corporateinternetbanking.commons;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

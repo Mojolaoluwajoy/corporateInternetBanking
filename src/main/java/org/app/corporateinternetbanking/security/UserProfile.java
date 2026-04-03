@@ -4,7 +4,6 @@ import lombok.Getter;
 import org.app.corporateinternetbanking.user.enums.UserRole;
 import org.app.corporateinternetbanking.user.enums.UserStatus;
 import org.app.corporateinternetbanking.user.model.User;
-import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,7 +49,7 @@ public class UserProfile implements UserDetails {
     }
 
     @Override
-    public @Nullable String getPassword() {
+    public String getPassword() {
         return password;
     }
 

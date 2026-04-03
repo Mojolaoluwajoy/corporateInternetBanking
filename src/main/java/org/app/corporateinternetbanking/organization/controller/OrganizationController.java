@@ -3,7 +3,7 @@ package org.app.corporateinternetbanking.organization.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.app.corporateinternetbanking.account.exception.UserNotFound;
-import org.app.corporateinternetbanking.dto.GenericResponse;
+import org.app.corporateinternetbanking.commons.GenericResponse;
 import org.app.corporateinternetbanking.organization.dto.*;
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationAlreadyProcessed;
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;

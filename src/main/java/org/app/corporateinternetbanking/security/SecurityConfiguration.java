@@ -27,8 +27,15 @@ public class SecurityConfiguration {
     private final UserDetailsService userDetailsService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity )throws Exception{
-        String[] publicEndPoints=new String[]{"/auth/**","/user/register","/organizations/create"};
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        String[] publicEndPoints = new String[]{
+                "/auth/**", "/user/register", "/organizations/create",
+                "/swagger-ui/**",
+                "/swagger-ui.html",
+                "/v3/api-docs/**",
+                "/v3/api-docs",
+                "/webjars/**",
+                "/swagger-resources/**"};
         httpSecurity.csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(auth ->auth
                 .requestMatchers(publicEndPoints)
@@ -48,13 +55,15 @@ public class SecurityConfiguration {
         return httpSecurity.build();
 
     }
-    @Bean
-    public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider provider=new  DaoAuthenticationProvider(userDetailsService);
 
-        provider.setPasswordEncoder(passwordEncoder());
-        return  provider;
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
+
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)throws Exception{
         return configuration.getAuthenticationManager();

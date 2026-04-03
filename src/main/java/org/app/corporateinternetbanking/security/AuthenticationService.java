@@ -2,8 +2,8 @@ package org.app.corporateinternetbanking.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.app.corporateinternetbanking.dto.LoginRequest;
-import org.app.corporateinternetbanking.dto.LoginResponse;
+import org.app.corporateinternetbanking.commons.LoginRequest;
+import org.app.corporateinternetbanking.commons.LoginResponse;
 import org.app.corporateinternetbanking.user.repository.UserRepository;
 import org.app.corporateinternetbanking.user.model.User;
 import org.springframework.security.authentication.AuthenticationManager;

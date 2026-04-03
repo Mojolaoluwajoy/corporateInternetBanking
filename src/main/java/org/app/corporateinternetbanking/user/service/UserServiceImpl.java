@@ -7,15 +7,16 @@ import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoes
 import org.app.corporateinternetbanking.organization.model.Organization;
 import org.app.corporateinternetbanking.organization.repository.OrganizationRepository;
 import org.app.corporateinternetbanking.security.JwtService;
-import org.app.corporateinternetbanking.user.dto.*;
-import org.app.corporateinternetbanking.user.enums.UserRole;
+import org.app.corporateinternetbanking.user.dto.InvitationRequest;
+import org.app.corporateinternetbanking.user.dto.PasswordResetRequest;
+import org.app.corporateinternetbanking.user.dto.UserRegistrationRequest;
+import org.app.corporateinternetbanking.user.dto.UserResponse;
 import org.app.corporateinternetbanking.user.enums.UserStatus;
+import org.app.corporateinternetbanking.user.exceptions.IncorrectPassword;
 import org.app.corporateinternetbanking.user.exceptions.TokenExpiredOrInvalid;
-import org.app.corporateinternetbanking.user.exceptions.UnauthorizedAccess;
 import org.app.corporateinternetbanking.user.exceptions.UserAlreadyRegistered;
 import org.app.corporateinternetbanking.user.model.User;
 import org.app.corporateinternetbanking.user.repository.UserRepository;
-import org.app.corporateinternetbanking.user.utils.SuperAdminMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,58 +26,35 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.app.corporateinternetbanking.user.utils.Map.mapResponse;
 import static org.app.corporateinternetbanking.user.utils.Map.userMapRequest;
+
 @Slf4j
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
+    PasswordEncoder passwordEncoder;
+    @Autowired
+    EmailSenderService senderService;
     @Autowired
     private OrganizationRepository organizationRepository;
-     PasswordEncoder passwordEncoder;
     @Autowired
-       private JwtService jwtService;
-@Autowired
-    EmailSenderService senderService;
+    private JwtService jwtService;
 
     @Override
-    public SuperAdminResponse registerSuperAdmin(SuperAdminRegistrationRequest request) throws UnauthorizedAccess, UserAlreadyRegistered {
-       if (!request.getRole() .equals(UserRole.SUPER_ADMIN)) {
-           throw new UnauthorizedAccess("Role must be super admin");
-       }
-      Optional <User> userId =repository.findByEmail(request.getEmail());
-        if (userId.isPresent()) {
-            throw new UserAlreadyRegistered("The users with this email already registered");
-        }
-     Optional <User> userNin = repository.findByNin(request.getNin());
-        if (userNin.isPresent() ) {
-
-         throw  new UserAlreadyRegistered("The users with this nin already registered");
-        }
-       User users = SuperAdminMap .mapSuperAdminRequest(request);
-        users.setStatus(UserStatus.ACTIVE);
-        String encodedPassword = passwordEncoder.encode(request.getPassword());
-        users.setPassword(encodedPassword);
-      User savedUser=repository.save(users);
-      return SuperAdminMap.mapSuperAdminResponse(savedUser);
-    }
-
-
-    @Override
-    public String sendInvitationTokenToUser(InvitationRequest invitationRequest){
-        String token= jwtService.generateEmailToken(invitationRequest.getUserEmail());
-        sendMail(invitationRequest,token);
-return invitationRequest.getUserEmail();
+    public String sendInvitationTokenToUser(InvitationRequest invitationRequest) {
+        String token = jwtService.generateEmailToken(invitationRequest.getUserEmail());
+        sendMail(invitationRequest, token);
+        return invitationRequest.getUserEmail();
     }
 
     @Override
     public UserResponse createUserWithToken(UserRegistrationRequest request) throws UserAlreadyRegistered, OrganizationDoesNotExist, TokenExpiredOrInvalid {
-if (!jwtService.isEmailTokenValid(request.getToken())){
-    throw new TokenExpiredOrInvalid("Token expired or its invalid");
-}
+        if (!jwtService.isEmailTokenValid(request.getToken())) {
+            throw new TokenExpiredOrInvalid("Token expired or its invalid");
+        }
         String nin = request.getNin();
         String email = request.getEmail();
         if (repository.findByNin(nin).isPresent() || repository.findByEmail(email).isPresent()) {
@@ -110,19 +88,39 @@ if (!jwtService.isEmailTokenValid(request.getToken())){
         }
         return userList;
     }
+
     @Override
     public Page<User> viewByStatus(int page, int size, String status) {
-        Pageable pageable= PageRequest.of(page,size);
-        if (status!=null){
-return repository.findByStatus(status,pageable);
+        Pageable pageable = PageRequest.of(page, size);
+        if (status != null) {
+            return repository.findByStatus(status, pageable);
         }
         return repository.findAll(pageable);
     }
 
-    public  void sendMail(InvitationRequest invitationRequest, String token) {
+    @Override
+    public String resetPassword(PasswordResetRequest passwordResetRequest) throws IncorrectPassword {
+        String oldPassword = passwordEncoder.encode(passwordResetRequest.getOldPassword());
+        User user = repository.findByPassword(oldPassword)
+                .orElseThrow(() -> new IncorrectPassword("The old password you entered is incorrect"));
+        if (user.getPassword().equals(oldPassword)) {
+            String newPassword = passwordEncoder.encode(passwordResetRequest.getNewPassword());
+            user.setPassword(newPassword);
+            repository.save(user);
+        }
+        return "Your request is being processed";
+    }
+
+    @Override
+    public void forgotPassword() {
+
+    }
+
+
+    public void sendMail(InvitationRequest invitationRequest, String token) {
 
         senderService.sendEmail(invitationRequest.getUserEmail(), "Account Creation Token", "Your verification token is: \n" + token);
 
 
     }
-    }
+}

@@ -20,10 +20,11 @@ public class NotificationServiceImpl implements NotificationService {
     @Autowired
     EmailSenderService emailSenderService;
     @Autowired
-    TransactionRepository  transactionRepository;
+    TransactionRepository transactionRepository;
+
     @Override
     public void createNotification(String recipient, String message) {
-        Notification notification=new Notification();
+        Notification notification = new Notification();
         notification.setRecipient(recipient);
         notification.setMessage(message);
         notification.setStatus(NotificationStatus.PENDING);
@@ -34,15 +35,15 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void sendPendingTransactionsNotification(Notification notification) {
-try {
-    emailSenderService.sendEmail(notification.getRecipient(), "pending transactions alert", notification.getMessage());
-    notification.setStatus(NotificationStatus.SENT);
-    notification.setSentAt(LocalDateTime.now());
-}catch (Exception e){
-    log.error("Email failed",e);
-}
-    }
+        try {
+            emailSenderService.sendEmail(notification.getRecipient(), "pending transactions alert", notification.getMessage());
+            notification.setStatus(NotificationStatus.SENT);
+            notification.setSentAt(LocalDateTime.now());
+        } catch (Exception e) {
+            log.error("Email failed", e);
 
+        }
+    }
 
 
 }

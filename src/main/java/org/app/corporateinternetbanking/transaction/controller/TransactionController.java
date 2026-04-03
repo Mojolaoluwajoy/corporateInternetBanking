@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
 import org.app.corporateinternetbanking.account.exception.UserNotFound;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
-import org.app.corporateinternetbanking.dto.GenericResponse;
+import org.app.corporateinternetbanking.commons.GenericResponse;
 import org.app.corporateinternetbanking.transaction.dto.ApprovalRequest;
 import org.app.corporateinternetbanking.transaction.dto.ApprovalResponse;
 import org.app.corporateinternetbanking.transaction.dto.TransactionRequest;
