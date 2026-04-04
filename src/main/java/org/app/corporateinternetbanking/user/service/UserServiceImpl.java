@@ -15,6 +15,7 @@ import org.app.corporateinternetbanking.user.exceptions.TokenExpiredOrInvalid;
 import org.app.corporateinternetbanking.user.exceptions.UserAlreadyRegistered;
 import org.app.corporateinternetbanking.user.model.User;
 import org.app.corporateinternetbanking.user.repository.UserRepository;
+import org.app.corporateinternetbanking.user.utils.PasswordResetResponseMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -97,16 +98,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String resetPassword(PasswordResetRequest passwordResetRequest) throws IncorrectPassword {
-        String oldPassword = passwordEncoder.encode(passwordResetRequest.getOldPassword());
-        User user = repository.findByPassword(oldPassword)
-                .orElseThrow(() -> new IncorrectPassword("The old password you entered is incorrect"));
-        if (user.getPassword().equals(oldPassword)) {
+    public PasswordResetResponse resetPassword(PasswordResetRequest passwordResetRequest) throws IncorrectPassword, InvalidEmail {
+        User user = repository.findByEmail(passwordResetRequest.getEmail())
+                .orElseThrow(() -> new InvalidEmail("Email not found"));
+        if (passwordEncoder.matches(passwordResetRequest.getOldPassword(), user.getPassword())) {
             String newPassword = passwordEncoder.encode(passwordResetRequest.getNewPassword());
             user.setPassword(newPassword);
             repository.save(user);
+        } else {
+            throw new IncorrectPassword("The old password you entered is incorrect");
         }
-        return "Your request is being processed";
+        return PasswordResetResponseMap.resetResponseMap(user);
     }
 
     @Override
@@ -123,12 +125,12 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public String sendForgotPasswordToken(String email) throws InvalidEmail {
+    public PasswordResetResponse sendForgotPasswordToken(String email) throws InvalidEmail {
         User user = repository.findByEmail(email)
                 .orElseThrow(() -> new InvalidEmail("Email not found"));
         String token = jwtService.generateEmailToken(email);
         senderService.sendEmail(user.getEmail(), "Password reset token", "Your password reset token is: \n" + token);
-        return "Check your email";
+        return PasswordResetResponseMap.resetResponseMap(user);
     }
 
 

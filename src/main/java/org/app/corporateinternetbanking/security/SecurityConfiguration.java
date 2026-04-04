@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -29,28 +30,28 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         String[] publicEndPoints = new String[]{
-                "/auth/**", "/user/register", "/organizations/create",
+                "/auth/**", "/user/register", "/organizations/create", "/users/password/reset", "/users/password/token",
                 "/swagger-ui/**",
                 "/swagger-ui.html",
                 "/v3/api-docs/**",
                 "/v3/api-docs",
                 "/webjars/**",
                 "/swagger-resources/**"};
-        httpSecurity.csrf(csrf->csrf.disable())
-                .authorizeHttpRequests(auth ->auth
-                .requestMatchers(publicEndPoints)
+        httpSecurity.csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(publicEndPoints)
                         .permitAll()
-                         .requestMatchers("/users/invitation/").hasRole(UserRole.ADMIN.name())
-                        .requestMatchers("/organizations/findBy","/organization/viewAll").hasRole(UserRole.SUPER_ADMIN.name())
+                        .requestMatchers("/users/invitation/").hasRole(UserRole.ADMIN.name())
+                        .requestMatchers("/organizations/findBy", "/organization/viewAll").hasRole(UserRole.SUPER_ADMIN.name())
                         .requestMatchers("/organizations/approve/").hasRole(UserRole.SUPER_ADMIN.name())
                         .requestMatchers("/accounts/create/").hasRole(UserRole.ADMIN.name())
-                      .requestMatchers("/transactions/initiate").hasRole(UserRole.MAKER.name())
+                        .requestMatchers("/transactions/initiate").hasRole(UserRole.MAKER.name())
                         .requestMatchers("/transactions/approve").hasRole(UserRole.APPROVER.name())
-                      .requestMatchers("/transactions/pending").hasAnyRole(UserRole.APPROVER.name(),UserRole.ADMIN.name())
-                       .requestMatchers("/currencies/status/").hasRole(UserRole.SUPER_ADMIN.name())
-                        .anyRequest().authenticated() ).sessionManagement(session ->session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                        .authenticationProvider(authenticationProvider())
+                        .requestMatchers("/transactions/pending").hasAnyRole(UserRole.APPROVER.name(), UserRole.ADMIN.name())
+                        .requestMatchers("/currencies/status/").hasRole(UserRole.SUPER_ADMIN.name())
+                        .anyRequest().authenticated()).sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
 
@@ -65,18 +66,14 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)throws Exception{
+    AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
-
-
 
 
 }

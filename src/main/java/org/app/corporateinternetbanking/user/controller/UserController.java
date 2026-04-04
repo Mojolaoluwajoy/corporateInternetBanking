@@ -35,7 +35,7 @@ public class UserController {
 
     @Operation(summary = "Reset password")
     @PostMapping("/password/reset")
-    public ResponseEntity<GenericResponse> resetPassword(@RequestBody PasswordResetRequest resetRequest) throws IncorrectPassword {
+    public ResponseEntity<GenericResponse> resetPassword(@RequestBody PasswordResetRequest resetRequest) throws IncorrectPassword, InvalidEmail {
         return new ResponseEntity<>(GenericResponse.success(service.resetPassword(resetRequest), "Your password has been reset"), HttpStatus.CREATED);
 
     }

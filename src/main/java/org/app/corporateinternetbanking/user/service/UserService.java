@@ -23,10 +23,10 @@ public interface UserService {
 
     Page<User> viewByStatus(int page, int size, String status);
 
-    String resetPassword(PasswordResetRequest passwordResetRequest) throws IncorrectPassword;
+    PasswordResetResponse resetPassword(PasswordResetRequest passwordResetRequest) throws IncorrectPassword, InvalidEmail;
 
     String resetForgottenPassword(ForgotPasswordRequest forgotPasswordRequest) throws InvalidEmail, TokenExpiredOrInvalid;
 
-    String sendForgotPasswordToken(String email) throws InvalidEmail;
+    PasswordResetResponse sendForgotPasswordToken(String email) throws InvalidEmail;
 
 }
