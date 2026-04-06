@@ -3,7 +3,7 @@ package org.app.corporateinternetbanking.security;
 import lombok.Getter;
 import org.app.corporateinternetbanking.user.enums.UserRole;
 import org.app.corporateinternetbanking.user.enums.UserStatus;
-import org.app.corporateinternetbanking.user.model.User;
+import org.app.corporateinternetbanking.user.domain.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +22,20 @@ public class UserProfile implements UserDetails {
     private UserRole role;
     private LocalDateTime createdAt;
     private UserStatus status;
+
+    public static UserProfile parse(User user) {
+        UserProfile userProfile = new UserProfile();
+
+        userProfile.email = user.getEmail();
+        userProfile.firstName = user.getFirstName();
+        userProfile.lastName = user.getLastName();
+        userProfile.nin = user.getNin();
+        userProfile.password = user.getPassword();
+        userProfile.createdAt = user.getCreatedAt();
+        userProfile.role = user.getRole();
+        userProfile.status = user.getStatus();
+        return userProfile;
+    }
 
     @Override
     public boolean isAccountNonExpired() {
@@ -45,7 +59,7 @@ public class UserProfile implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority("ROLE_"+role.name()));
+        return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override
@@ -56,19 +70,5 @@ public class UserProfile implements UserDetails {
     @Override
     public String getUsername() {
         return email;
-    }
-
-    public static UserProfile parse(User user) {
-        UserProfile userProfile = new UserProfile();
-
-        userProfile.email = user.getEmail();
-        userProfile.firstName = user.getFirstName();
-        userProfile.lastName = user.getLastName();
-        userProfile.nin = user.getNin();
-        userProfile.password = user.getPassword();
-        userProfile.createdAt = user.getCreatedAt();
-        userProfile.role = user.getRole();
-        userProfile.status = user.getStatus();
-        return userProfile;
     }
 }

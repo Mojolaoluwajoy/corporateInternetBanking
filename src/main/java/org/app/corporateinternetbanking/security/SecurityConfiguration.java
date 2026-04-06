@@ -30,7 +30,10 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         String[] publicEndPoints = new String[]{
-                "/auth/**", "/user/register", "/organizations/create", "/users/password/reset", "/users/password/token",
+                "/auth/login",
+                "/auth/password/token",
+                "/auth/forgotten/password",
+                "/user/create", "/organizations/create",
                 "/swagger-ui/**",
                 "/swagger-ui.html",
                 "/v3/api-docs/**",
@@ -49,6 +52,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/transactions/approve").hasRole(UserRole.APPROVER.name())
                         .requestMatchers("/transactions/pending").hasAnyRole(UserRole.APPROVER.name(), UserRole.ADMIN.name())
                         .requestMatchers("/currencies/status/").hasRole(UserRole.SUPER_ADMIN.name())
+                        .requestMatchers("/auth/password/reset").authenticated()
                         .anyRequest().authenticated()).sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

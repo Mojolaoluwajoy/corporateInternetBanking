@@ -2,12 +2,10 @@ package org.app.corporateinternetbanking.audit;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.app.corporateinternetbanking.account.model.Account;
-import org.app.corporateinternetbanking.account.repository.AccountRepository;
-import org.app.corporateinternetbanking.ledger.enums.EntryType;
-import org.app.corporateinternetbanking.ledger.mode.LedgerEntry;
-import org.app.corporateinternetbanking.ledger.repository.LedgerRepository;
-import org.app.corporateinternetbanking.transaction.enums.TransactionType;
+import org.app.corporateinternetbanking.account.domain.entity.Account;
+import org.app.corporateinternetbanking.account.domain.repository.AccountRepository;
+import org.app.corporateinternetbanking.ledger.domain.entity.LedgerEntry;
+import org.app.corporateinternetbanking.ledger.domain.repository.LedgerRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,27 +18,24 @@ public class AuditService {
     private final AccountRepository accountRepository;
     private final LedgerRepository ledgerRepository;
 
-    public void auditBalances(){
+    public void auditBalances() {
 
-        List<Account> accounts=accountRepository.findAll();
+        List<Account> accounts = accountRepository.findAll();
 
-        for (Account account:accounts){
-
-//List <LedgerEntry> entries=ledgerRepository.findByAccountId(account.getId());
-
-           LedgerEntry lastLedger =ledgerRepository.findByAccountIdOrderByCreatedAtDesc(account.getId());
-          if (lastLedger==null) continue;
-
-            BigDecimal storedBalance=account.getBalance();
-            BigDecimal computedBalance=lastLedger.getBalanceAfter();
+        for (Account account : accounts) {
 
 
+            LedgerEntry lastLedger = ledgerRepository.findByAccountIdOrderByCreatedAtDesc(account.getId());
+            if (lastLedger == null) continue;
 
-            if (storedBalance.compareTo(computedBalance)!=0) {
+            BigDecimal storedBalance = account.getBalance();
+            BigDecimal computedBalance = lastLedger.getBalanceAfter();
+
+
+            if (storedBalance.compareTo(computedBalance) != 0) {
                 account.setFlagged(true);
-                log.info("MISMATCH DETECTED FOR ACCOUNT: {},STORED BALANCE: {},COMPUTED BALANCE: {}",account.getId(),storedBalance,computedBalance);
-            }
-            else {
+                log.info("MISMATCH DETECTED FOR ACCOUNT: {},STORED BALANCE: {},COMPUTED BALANCE: {}", account.getId(), storedBalance, computedBalance);
+            } else {
                 account.setFlagged(false);
             }
         }

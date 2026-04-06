@@ -2,10 +2,10 @@ package org.app.corporateinternetbanking.notification.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.app.corporateinternetbanking.email.EmailSenderService;
-import org.app.corporateinternetbanking.notification.NotificationStatus;
-import org.app.corporateinternetbanking.notification.model.Notification;
-import org.app.corporateinternetbanking.notification.repository.NotificationRepository;
-import org.app.corporateinternetbanking.transaction.repository.TransactionRepository;
+import org.app.corporateinternetbanking.notification.domain.entity.Notification;
+import org.app.corporateinternetbanking.notification.domain.repository.NotificationRepository;
+import org.app.corporateinternetbanking.notification.enums.NotificationStatus;
+import org.app.corporateinternetbanking.transaction.domain.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

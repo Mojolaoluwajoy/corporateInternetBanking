@@ -2,16 +2,15 @@ package org.app.corporateinternetbanking.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.app.corporateinternetbanking.commons.GenericResponse;
-import org.app.corporateinternetbanking.commons.LoginRequest;
-import org.app.corporateinternetbanking.commons.LoginResponse;
-import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;
+import org.app.corporateinternetbanking.commons.response.GenericResponse;
 import org.app.corporateinternetbanking.security.AuthenticationService;
-import org.app.corporateinternetbanking.user.dto.UserRegistrationRequest;
-import org.app.corporateinternetbanking.user.dto.UserResponse;
+import org.app.corporateinternetbanking.user.dto.ForgotPasswordRequest;
+import org.app.corporateinternetbanking.user.dto.PasswordResetRequest;
+import org.app.corporateinternetbanking.user.dto.authDto.LoginRequest;
+import org.app.corporateinternetbanking.user.dto.authDto.LoginResponse;
+import org.app.corporateinternetbanking.user.exceptions.IncorrectPassword;
+import org.app.corporateinternetbanking.user.exceptions.InvalidEmail;
 import org.app.corporateinternetbanking.user.exceptions.TokenExpiredOrInvalid;
-import org.app.corporateinternetbanking.user.exceptions.UnauthorizedAccess;
-import org.app.corporateinternetbanking.user.exceptions.UserAlreadyRegistered;
 import org.app.corporateinternetbanking.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,14 +30,6 @@ public class AuthController {
     @Autowired
     AuthenticationService authenticationService;
 
-//    @Operation(summary = "Register super admins")
-//    @PostMapping("/register")
-//    public ResponseEntity<GenericResponse> registerSuperAdmin(@RequestBody SuperAdminRegistrationRequest request) throws UserAlreadyRegistered, UnauthorizedAccess, OrganizationDoesNotExist {
-//        SuperAdminResponse response = service.registerSuperAdmin(request);
-//        return new ResponseEntity<>(GenericResponse.success(response, "Super Admin registration successful"), HttpStatus.CREATED);
-//
-//    }
-
     @Operation(summary = "Users login")
     @PostMapping("/login")
     public ResponseEntity<GenericResponse> authenticate(@RequestBody LoginRequest request) {
@@ -46,11 +37,25 @@ public class AuthController {
         return new ResponseEntity<>(GenericResponse.success(response, "Authentication successful"), HttpStatus.OK);
     }
 
-    @Operation(summary = "Create a user with token from admin")
-    @PostMapping("/create")
-    public ResponseEntity<GenericResponse> createUser(@RequestBody UserRegistrationRequest request) throws UserAlreadyRegistered, UnauthorizedAccess, OrganizationDoesNotExist, TokenExpiredOrInvalid {
-        UserResponse response = service.createUserWithToken(request);
-        return new ResponseEntity<>(GenericResponse.success(response, "user registration successful"), HttpStatus.CREATED);
+
+    @Operation(summary = "change password")
+    @PostMapping("/password/reset")
+    public ResponseEntity<GenericResponse> resetPassword(@RequestBody PasswordResetRequest resetRequest) throws IncorrectPassword, InvalidEmail {
+        return new ResponseEntity<>(GenericResponse.success(service.resetPassword(resetRequest), "Your password has been reset"), HttpStatus.CREATED);
+
+    }
+
+    @Operation(summary = "password reset token")
+    @PostMapping("/password/token")
+    public ResponseEntity<GenericResponse> resetToken(@RequestBody String email) throws InvalidEmail {
+        return new ResponseEntity<>(GenericResponse.success(service.sendForgotPasswordToken(email), "A token has bee sent to your email"), HttpStatus.CREATED);
+
+    }
+
+    @Operation(summary = "Reset forgotten password")
+    @PostMapping("/forgotten/password")
+    public ResponseEntity<GenericResponse> resetForgottenPassword(@RequestBody ForgotPasswordRequest resetRequest) throws InvalidEmail, TokenExpiredOrInvalid {
+        return new ResponseEntity<>(GenericResponse.success(service.resetForgottenPassword(resetRequest), "Your password has been reset"), HttpStatus.CREATED);
 
     }
 

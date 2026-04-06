@@ -3,7 +3,7 @@ package org.app.corporateinternetbanking.account.service;
 import org.app.corporateinternetbanking.account.dto.AccountRequest;
 import org.app.corporateinternetbanking.account.dto.AccountResponse;
 import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
-import org.app.corporateinternetbanking.account.exception.UserNotFound;
+import org.app.corporateinternetbanking.user.exceptions.UserNotFound;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotActive;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;

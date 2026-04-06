@@ -6,7 +6,7 @@ import org.app.corporateinternetbanking.currency.dto.CurrencyRequest;
 import org.app.corporateinternetbanking.currency.dto.CurrencyResponse;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
 import org.app.corporateinternetbanking.currency.service.CurrencyService;
-import org.app.corporateinternetbanking.commons.GenericResponse;
+import org.app.corporateinternetbanking.commons.response.GenericResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

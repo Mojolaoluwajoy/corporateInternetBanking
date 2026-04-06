@@ -16,8 +16,6 @@ public class OrganizationRequest {
     private String email;
     private String password;
     private String nin;
-    //private String adminKey;
-   // private Long organizationId;
     private UserRole role;
 
 

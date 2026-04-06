@@ -3,19 +3,17 @@ package org.app.corporateinternetbanking.user.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.app.corporateinternetbanking.email.EmailSenderService;
+import org.app.corporateinternetbanking.organization.domain.entity.Organization;
+import org.app.corporateinternetbanking.organization.domain.repository.OrganizationRepository;
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;
-import org.app.corporateinternetbanking.organization.model.Organization;
-import org.app.corporateinternetbanking.organization.repository.OrganizationRepository;
 import org.app.corporateinternetbanking.security.JwtService;
+import org.app.corporateinternetbanking.user.domain.entity.User;
+import org.app.corporateinternetbanking.user.domain.repository.UserRepository;
 import org.app.corporateinternetbanking.user.dto.*;
+import org.app.corporateinternetbanking.user.enums.UserRole;
 import org.app.corporateinternetbanking.user.enums.UserStatus;
-import org.app.corporateinternetbanking.user.exceptions.IncorrectPassword;
-import org.app.corporateinternetbanking.user.exceptions.InvalidEmail;
-import org.app.corporateinternetbanking.user.exceptions.TokenExpiredOrInvalid;
-import org.app.corporateinternetbanking.user.exceptions.UserAlreadyRegistered;
-import org.app.corporateinternetbanking.user.model.User;
-import org.app.corporateinternetbanking.user.repository.UserRepository;
-import org.app.corporateinternetbanking.user.utils.PasswordResetResponseMap;
+import org.app.corporateinternetbanking.user.exceptions.*;
+import org.app.corporateinternetbanking.user.utils.mapper.PasswordResetResponseMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,8 +24,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.app.corporateinternetbanking.user.utils.Map.mapResponse;
-import static org.app.corporateinternetbanking.user.utils.Map.userMapRequest;
+import static org.app.corporateinternetbanking.user.utils.mapper.UserMap.mapResponse;
+import static org.app.corporateinternetbanking.user.utils.mapper.UserMap.userMapRequest;
 
 @Slf4j
 @Service
@@ -50,7 +48,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse createUserWithToken(UserRegistrationRequest request) throws UserAlreadyRegistered, OrganizationDoesNotExist, TokenExpiredOrInvalid {
+    public UserResponse createUserWithToken(UserRegistrationRequest request) throws UserAlreadyRegistered, OrganizationDoesNotExist, TokenExpiredOrInvalid, SuperAdminAlreadyExists {
+        if (request.getRole() == UserRole.SUPER_ADMIN) {
+            throw new SuperAdminAlreadyExists("Super admin already exists");
+        }
         if (!jwtService.isEmailTokenValid(request.getToken())) {
             throw new TokenExpiredOrInvalid("Token expired or its invalid");
         }
@@ -83,6 +84,7 @@ public class UserServiceImpl implements UserService {
             userResponse.setEmail(savedUser.getEmail());
             userResponse.setRole(savedUser.getRole());
             userResponse.setStatus(savedUser.getStatus());
+            userList.add(userResponse);
 
         }
         return userList;

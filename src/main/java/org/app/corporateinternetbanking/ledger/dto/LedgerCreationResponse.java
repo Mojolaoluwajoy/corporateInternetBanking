@@ -2,12 +2,13 @@ package org.app.corporateinternetbanking.ledger.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.app.corporateinternetbanking.account.model.Account;
+import org.app.corporateinternetbanking.account.domain.entity.Account;
 import org.app.corporateinternetbanking.ledger.enums.EntryType;
-import org.app.corporateinternetbanking.transaction.model.Transaction;
+import org.app.corporateinternetbanking.transaction.domain.entity.Transaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 @Setter
 @Getter
 public class LedgerCreationResponse {
