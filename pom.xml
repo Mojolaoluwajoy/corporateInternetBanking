@@ -65,12 +65,7 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
-        <!-- HTTP Client -->
-        <!--        <dependency>-->
-        <!--            <groupId>org.apache.httpcomponents.client5</groupId>-->
-        <!--            <artifactId>httpclient5</artifactId>-->
-        <!--        </dependency>-->
-
+        
         <!-- JWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>

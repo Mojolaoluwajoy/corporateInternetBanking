@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 
 @Service
-public class JsonPlaceRestClientService {
+public class CurrencyExchangeService {
 
     @Autowired
     private CurrencyClient currencyClient;
