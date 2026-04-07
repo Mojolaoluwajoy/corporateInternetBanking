@@ -33,7 +33,7 @@ public class SecurityConfiguration {
                 "/auth/login",
                 "/auth/password/token",
                 "/auth/forgotten/password",
-                "/user/create", "/organizations/create",
+                "/users/create", "/organizations/create",
                 "/swagger-ui/**",
                 "/swagger-ui.html",
                 "/v3/api-docs/**",
