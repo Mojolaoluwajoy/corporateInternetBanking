@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.app.corporateinternetbanking.account.enums.AccountType;
 import org.app.corporateinternetbanking.currency.domain.entity.Currency;
 import org.app.corporateinternetbanking.organization.domain.entity.Organization;
 import org.app.corporateinternetbanking.transaction.domain.entity.Transaction;
@@ -21,11 +22,12 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
     @Column(unique = true)
     private String accountNumber;
-    private BigDecimal balance;
-    private String type;
+    private BigDecimal totalBalance;
+    private BigDecimal availableBalance;
+    @Enumerated(EnumType.STRING)
+    private AccountType type;
     @OneToMany(mappedBy = "sourceAccount")
     private List<Transaction> sourceTransactions;
     @OneToMany(mappedBy = "destinationAccount")
@@ -43,12 +45,20 @@ public class Account {
     private boolean flagged;
 
     @PrePersist
-    public void prePersist() {
-        if (balance == null) {
-            balance = BigDecimal.valueOf(10000);
+    public void totalBalance() {
+        if (totalBalance == null) {
+            totalBalance = BigDecimal.valueOf(10000);
         }
     }
 
+    @PrePersist
+    public void availableBalance() {
+        if (availableBalance == null) {
+            availableBalance = getTotalBalance();
+        }
+    }
+
+    @PrePersist
     private void onCreate() {
         this.flagged = false;
     }

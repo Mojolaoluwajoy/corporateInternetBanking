@@ -33,7 +33,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static org.app.corporateinternetbanking.transaction.utils.mapper.ApprovalMap.mapApprovalRequest;
@@ -84,11 +83,12 @@ public class TransactionServiceImpl implements TransactionService {
 
         Account sourceAccount = accountRepository.findByAccountNumber(request.getSourceAccount())
                 .orElseThrow(() -> new AccountDoesNotExist("This source account does not exist"));
-        if (request.getAmount().compareTo(sourceAccount.getBalance()) > 0) {
+        if (request.getAmount().compareTo(sourceAccount.getAvailableBalance()) > 0) {
             throw new InsufficientBalance("The balance must be greater than the amount to transfer");
 
 
         }
+        sourceAccount.setAvailableBalance(sourceAccount.getTotalBalance().subtract(request.getAmount()));
         transaction.setSourceAccount(sourceAccount);
         transaction.setDestinationAccount(destinationAccount);
 
@@ -102,10 +102,6 @@ public class TransactionServiceImpl implements TransactionService {
     public ApprovalResponse approval(ApprovalRequest request) throws TransactionAlreadyProcessed, TransactionDoesNotExist, InvalidStatus, UnsupportedTransactionType, UserNotFound, UnauthorizedAccess, InvalidAmount, AccountDoesNotExist, CurrencyNotFound, InsufficientBalance {
         Transaction transaction = transactionRepository.findById(request.getTransactionId())
                 .orElseThrow(() -> new TransactionDoesNotExist("This transaction does not exist"));
-        if (transaction.getAmount().compareTo(transaction.getSourceAccount().getBalance()) > 0) {
-            transaction.setStatus(TransactionStatus.REJECTED);
-            throw new InsufficientBalance("The balance must be more than the amount to transfer");
-        }
         User user = userRepository.findById(request.getApproverId())
                 .orElseThrow(() -> new UserNotFound("This user does not exist"));
         if (!user.getRole().equals(UserRole.APPROVER)) {
@@ -114,7 +110,7 @@ public class TransactionServiceImpl implements TransactionService {
         if (!transaction.getStatus().name().equalsIgnoreCase("PENDING")) {
             throw new TransactionAlreadyProcessed("This transaction has been processed");
         }
-        if (request.getStatus() != TransactionStatus.APPROVED && request.getStatus() != TransactionStatus.REJECTED) {
+        if (request.getStatus() != TransactionStatus.SUCCESS && request.getStatus() != TransactionStatus.REJECTED) {
             throw new InvalidStatus("invalid status");
         }
         transaction.setProcessedBy(user);
@@ -125,25 +121,24 @@ public class TransactionServiceImpl implements TransactionService {
         }
         transaction.setProcessedAt(LocalDateTime.now());
         mapApprovalRequest(request);
-        processTransaction(transaction);
+        processTransaction(transaction, TransactionType.INTERNAL_TRANSFER);
         return mapApprovalResponse(transaction);
     }
 
-    private void processTransaction(Transaction transaction) throws CurrencyNotFound {
-        if (Objects.requireNonNull(transaction.getType()) == TransactionType.TRANSFER) {
-            processTransfer(transaction);
+    private void processTransaction(Transaction transaction, TransactionType type) throws CurrencyNotFound {
+        switch (type) {
+            case INTERNAL_TRANSFER -> processInternalTransfer(transaction);
         }
-        transaction.setStatus(TransactionStatus.APPROVED);
 
     }
 
-    private ApprovalResponse processTransfer(Transaction transaction) throws CurrencyNotFound {
+    private ApprovalResponse processInternalTransfer(Transaction transaction) throws CurrencyNotFound {
         Account source = transaction.getSourceAccount();
         Account destination = transaction.getDestinationAccount();
         BigDecimal amount = transaction.getAmount();
         if (source.getCurrency().getCode().equals(destination.getCurrency().getCode())) {
-            BigDecimal newSourceBalance = source.getBalance().subtract(amount);
-            source.setBalance(newSourceBalance);
+            BigDecimal newSourceBalance = source.getTotalBalance().subtract(amount);
+            source.setTotalBalance(newSourceBalance);
             transaction.setUpdatedBalance(newSourceBalance);
         } else {
             String from = source.getCurrency().getCode();
@@ -152,11 +147,11 @@ public class TransactionServiceImpl implements TransactionService {
             BigDecimal rate = currencyService.getRate(from, to);
             BigDecimal convertedAmount = amount.multiply(rate);
 
-            BigDecimal newSourceBalance = source.getBalance().subtract(amount);
-            source.setBalance(newSourceBalance);
+            BigDecimal newSourceBalance = source.getTotalBalance().subtract(amount);
+            source.setTotalBalance(newSourceBalance);
             ledgerService.createEntry(source, transaction, EntryType.DEBIT, source.getCurrency().getCode(), amount, newSourceBalance);
-            BigDecimal newDestinationBalance = destination.getBalance().add(convertedAmount);
-            destination.setBalance(newDestinationBalance);
+            BigDecimal newDestinationBalance = destination.getTotalBalance().add(convertedAmount);
+            destination.setTotalBalance(newDestinationBalance);
             ledgerService.createEntry(destination, transaction, EntryType.CREDIT, destination.getCurrency().getCode(), convertedAmount, newDestinationBalance);
             transaction.setUpdatedBalance(newSourceBalance);
             transaction.setConvertedAmount(convertedAmount);
@@ -165,8 +160,8 @@ public class TransactionServiceImpl implements TransactionService {
 
         }
 
-        transaction.setType(TransactionType.TRANSFER);
-        transaction.setStatus(TransactionStatus.APPROVED);
+        transaction.setType(TransactionType.INTERNAL_TRANSFER);
+        transaction.setStatus(TransactionStatus.SUCCESS);
         transaction = transactionRepository.save(transaction);
         return mapApprovalResponse(transaction);
     }
@@ -216,7 +211,7 @@ public class TransactionServiceImpl implements TransactionService {
         log.info("Calculating 24 hours window transaction volume");
         LocalDateTime end = LocalDateTime.now().minusHours(24);
         LocalDateTime start = LocalDateTime.now();
-        List<Transaction> expiredTransactions = transactionRepository.findByCreatedAtBetweenAndStatus(start, end, TransactionStatus.APPROVED);
+        List<Transaction> expiredTransactions = transactionRepository.findByCreatedAtBetweenAndStatus(start, end, TransactionStatus.SUCCESS);
         BigDecimal transactionVolume = BigDecimal.ZERO;
         for (Transaction transaction : expiredTransactions) {
             transactionVolume = transactionVolume.add(transaction.getAmount());

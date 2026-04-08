@@ -1,8 +1,11 @@
 package org.app.corporateinternetbanking.transaction.enums;
 
 public enum TransactionStatus {
-    APPROVED,
+
     PENDING,
+    SUCCESS,
+    FAILED,
+    REVERSED,
     REJECTED,
     EXPIRED
 

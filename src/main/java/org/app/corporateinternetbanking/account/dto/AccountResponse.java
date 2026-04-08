@@ -2,6 +2,7 @@ package org.app.corporateinternetbanking.account.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.app.corporateinternetbanking.account.enums.AccountType;
 import org.app.corporateinternetbanking.currency.dto.CurrencyCodeDto;
 import org.app.corporateinternetbanking.organization.dto.OrganizationId;
 import org.app.corporateinternetbanking.user.dto.UserIdDto;
@@ -12,14 +13,15 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 public class AccountResponse {
-     private String name;
-     private String accountNumber;
-     private BigDecimal balance;
-     private String type;
-     private OrganizationId organizationId;
-     private CurrencyCodeDto currencyCode;
-     private UserIdDto createdBy;
-    private LocalDateTime createdAt=LocalDateTime.now();
+    private String accountNumber;
+    private BigDecimal totalBalance;
+    private BigDecimal availableBalance;
+    private AccountType type;
+    private OrganizationId organizationId;
+    private String organizationName;
+    private CurrencyCodeDto currencyCode;
+    private UserIdDto createdBy;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
 
 }

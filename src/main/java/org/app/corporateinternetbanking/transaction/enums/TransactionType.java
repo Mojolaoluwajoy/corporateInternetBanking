@@ -1,5 +1,5 @@
 package org.app.corporateinternetbanking.transaction.enums;
 
 public enum TransactionType {
-    TRANSFER,DEBIT,CREDIT
+    INTERNAL_TRANSFER, EXTERNAL_FUNDING, EXTERNAL_PAYOUT
 }
