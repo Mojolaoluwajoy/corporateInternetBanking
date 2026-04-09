@@ -33,7 +33,6 @@ public class Transaction {
     private Account destinationAccount;
     @Column(unique = true)
     private String transactionReference;
-    private BigDecimal updatedBalance = BigDecimal.ZERO;
     @ManyToOne
     @JoinColumn(name = "created_by")
     private User createdBy;

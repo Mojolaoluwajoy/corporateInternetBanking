@@ -91,7 +91,7 @@ public class TransactionJobs {
         List<Transaction> transactions = transactionRepository.findByCreatedAtBetween(start, end);
         BigDecimal volume = transactionService.calculateTransactionVolume();
         List<Transaction> pendingTransactions = transactionRepository.findByCreatedAtBetweenAndStatus(start, end, TransactionStatus.PENDING);
-        List<Transaction> successfulTransactions = transactionRepository.findByCreatedAtBetweenAndStatus(start, end, TransactionStatus.APPROVED);
+        List<Transaction> successfulTransactions = transactionRepository.findByCreatedAtBetweenAndStatus(start, end, TransactionStatus.SUCCESS);
         List<Transaction> expiredTransactions = transactionRepository.findByCreatedAtBetweenAndStatus(start, end, TransactionStatus.EXPIRED);
         List<Transaction> rejectedTransactions = transactionRepository.findByCreatedAtBetweenAndStatus(start, end, TransactionStatus.REJECTED);
         message.append("Daily summary report\n\n");

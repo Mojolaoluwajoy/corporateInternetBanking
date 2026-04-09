@@ -89,6 +89,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         }
         sourceAccount.setAvailableBalance(sourceAccount.getTotalBalance().subtract(request.getAmount()));
+        sourceAccount.setReservedBalance(sourceAccount.getReservedBalance().add(request.getAmount()));
         transaction.setSourceAccount(sourceAccount);
         transaction.setDestinationAccount(destinationAccount);
 
@@ -126,10 +127,13 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private void processTransaction(Transaction transaction, TransactionType type) throws CurrencyNotFound {
-        switch (type) {
-            case INTERNAL_TRANSFER -> processInternalTransfer(transaction);
-        }
 
+    }
+
+    private void processExternalPayout() {
+    }
+
+    private void processExternalFunding() {
     }
 
     private ApprovalResponse processInternalTransfer(Transaction transaction) throws CurrencyNotFound {
@@ -139,7 +143,7 @@ public class TransactionServiceImpl implements TransactionService {
         if (source.getCurrency().getCode().equals(destination.getCurrency().getCode())) {
             BigDecimal newSourceBalance = source.getTotalBalance().subtract(amount);
             source.setTotalBalance(newSourceBalance);
-            transaction.setUpdatedBalance(newSourceBalance);
+            source.setReservedBalance(source.getReservedBalance().subtract(transaction.getAmount()));
         } else {
             String from = source.getCurrency().getCode();
             String to = destination.getCurrency().getCode();
@@ -153,7 +157,7 @@ public class TransactionServiceImpl implements TransactionService {
             BigDecimal newDestinationBalance = destination.getTotalBalance().add(convertedAmount);
             destination.setTotalBalance(newDestinationBalance);
             ledgerService.createEntry(destination, transaction, EntryType.CREDIT, destination.getCurrency().getCode(), convertedAmount, newDestinationBalance);
-            transaction.setUpdatedBalance(newSourceBalance);
+            source.setReservedBalance(source.getReservedBalance().subtract(transaction.getAmount()));
             transaction.setConvertedAmount(convertedAmount);
             transaction.setExchangeRate(rate);
             transaction.setAmount(amount);

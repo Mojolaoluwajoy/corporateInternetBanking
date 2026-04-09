@@ -28,7 +28,7 @@ public class AuditService {
             LedgerEntry lastLedger = ledgerRepository.findByAccountIdOrderByCreatedAtDesc(account.getId());
             if (lastLedger == null) continue;
 
-            BigDecimal storedBalance = account.getBalance();
+            BigDecimal storedBalance = account.getTotalBalance();
             BigDecimal computedBalance = lastLedger.getBalanceAfter();
 
 

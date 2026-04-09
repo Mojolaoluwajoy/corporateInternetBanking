@@ -1,24 +1,24 @@
 package org.app.corporateinternetbanking.account.service;
 
 import lombok.AllArgsConstructor;
+import org.app.corporateinternetbanking.account.domain.entity.Account;
+import org.app.corporateinternetbanking.account.domain.repository.AccountRepository;
 import org.app.corporateinternetbanking.account.dto.AccountRequest;
 import org.app.corporateinternetbanking.account.dto.AccountResponse;
 import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
-import org.app.corporateinternetbanking.user.exceptions.UserNotFound;
-import org.app.corporateinternetbanking.account.domain.entity.Account;
-import org.app.corporateinternetbanking.account.domain.repository.AccountRepository;
+import org.app.corporateinternetbanking.currency.domain.entity.Currency;
+import org.app.corporateinternetbanking.currency.domain.repository.CurrencyRepository;
 import org.app.corporateinternetbanking.currency.enums.CurrencyStatus;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotActive;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
-import org.app.corporateinternetbanking.currency.domain.entity.Currency;
-import org.app.corporateinternetbanking.currency.domain.repository.CurrencyRepository;
 import org.app.corporateinternetbanking.email.EmailSenderService;
-import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;
 import org.app.corporateinternetbanking.organization.domain.entity.Organization;
 import org.app.corporateinternetbanking.organization.domain.repository.OrganizationRepository;
-import org.app.corporateinternetbanking.user.dto.UserIdDto;
+import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;
 import org.app.corporateinternetbanking.user.domain.entity.User;
 import org.app.corporateinternetbanking.user.domain.repository.UserRepository;
+import org.app.corporateinternetbanking.user.dto.UserIdDto;
+import org.app.corporateinternetbanking.user.exceptions.UserNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -68,8 +68,8 @@ public class AccountServiceImpl implements AccountService {
         List<AccountResponse> accountList = new ArrayList<>();
         for (Account savedAccount : accounts) {
             AccountResponse response = new AccountResponse();
-            response.setName(savedAccount.getName());
-            response.setBalance(savedAccount.getBalance());
+            response.setTotalBalance(savedAccount.getTotalBalance());
+            response.setAvailableBalance(savedAccount.getAvailableBalance());
             response.setAccountNumber(savedAccount.getAccountNumber());
             response.setType(savedAccount.getType());
             response.setCreatedBy(new UserIdDto(savedAccount.getCreatedBy().getId()));

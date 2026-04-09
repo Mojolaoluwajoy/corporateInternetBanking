@@ -26,6 +26,7 @@ public class Account {
     private String accountNumber;
     private BigDecimal totalBalance;
     private BigDecimal availableBalance;
+    private BigDecimal reservedBalance;
     @Enumerated(EnumType.STRING)
     private AccountType type;
     @OneToMany(mappedBy = "sourceAccount")
@@ -44,22 +45,16 @@ public class Account {
     private LocalDateTime createdAt = LocalDateTime.now();
     private boolean flagged;
 
+
     @PrePersist
-    public void totalBalance() {
+    public void prePersist() {
+        this.flagged = false;
+        if (availableBalance == null) {
+            availableBalance = getTotalBalance();
+        }
         if (totalBalance == null) {
             totalBalance = BigDecimal.valueOf(10000);
         }
     }
 
-    @PrePersist
-    public void availableBalance() {
-        if (availableBalance == null) {
-            availableBalance = getTotalBalance();
-        }
-    }
-
-    @PrePersist
-    private void onCreate() {
-        this.flagged = false;
-    }
 }
