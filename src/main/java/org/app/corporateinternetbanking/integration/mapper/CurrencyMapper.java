@@ -1,7 +1,7 @@
-package org.app.corporateinternetbanking.currency.integration.mapper;
+package org.app.corporateinternetbanking.integration.mapper;
 
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
-import org.app.corporateinternetbanking.currency.integration.dto.CurrencyIntegrationResponse;
+import org.app.corporateinternetbanking.integration.dto.CurrencyIntegrationResponse;
 
 import java.math.BigDecimal;
 

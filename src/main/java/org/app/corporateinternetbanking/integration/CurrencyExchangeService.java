@@ -1,8 +1,8 @@
-package org.app.corporateinternetbanking.currency.integration;
+package org.app.corporateinternetbanking.integration;
 
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
-import org.app.corporateinternetbanking.currency.integration.dto.CurrencyIntegrationResponse;
-import org.app.corporateinternetbanking.currency.integration.mapper.CurrencyMapper;
+import org.app.corporateinternetbanking.integration.dto.CurrencyIntegrationResponse;
+import org.app.corporateinternetbanking.integration.mapper.CurrencyMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
-package org.app.corporateinternetbanking.currency.integration;
+package org.app.corporateinternetbanking.integration;
 
-import org.app.corporateinternetbanking.currency.integration.dto.CurrencyIntegrationResponse;
+import org.app.corporateinternetbanking.integration.dto.CurrencyIntegrationResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
