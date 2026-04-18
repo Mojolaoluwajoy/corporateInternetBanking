@@ -15,12 +15,14 @@ import org.app.corporateinternetbanking.email.EmailSenderService;
 import org.app.corporateinternetbanking.organization.domain.entity.Organization;
 import org.app.corporateinternetbanking.organization.domain.repository.OrganizationRepository;
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;
+import org.app.corporateinternetbanking.transaction.exceptions.InsufficientBalance;
 import org.app.corporateinternetbanking.user.domain.entity.User;
 import org.app.corporateinternetbanking.user.domain.repository.UserRepository;
 import org.app.corporateinternetbanking.user.dto.UserIdDto;
 import org.app.corporateinternetbanking.user.exceptions.UserNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -87,4 +89,25 @@ public class AccountServiceImpl implements AccountService {
         return responseMap(account.get());
 
     }
+
+    @Override
+    public void credit(Long accountId, BigDecimal amount) throws AccountDoesNotExist {
+        Account  account=repository.findById(accountId).orElseThrow(()-> new AccountDoesNotExist("Account not found"));
+
+        account.setTotalBalance(account.getTotalBalance().add(amount));
+        repository.save(account);
+    }
+
+    @Override
+    public void debit(Long accountId, BigDecimal amount) throws AccountDoesNotExist, InsufficientBalance {
+        Account  account=repository.findById(accountId).orElseThrow(()-> new AccountDoesNotExist("Account not found"));
+
+        if (account.getTotalBalance().compareTo(amount) < 0) {
+            throw new InsufficientBalance("Insufficient funds");
+        }
+        account.setTotalBalance(account.getTotalBalance().subtract(amount));
+        repository.save(account);
+    }
+
+
 }

@@ -153,5 +153,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
+@ExceptionHandler(InvalidSignature.class)
+    public ResponseEntity<GenericResponse> handleInvalidSignature(InvalidSignature exception) {
+        log.error("Invalid signature: {}", exception.getMessage());
+        return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
 
 }

@@ -11,7 +11,7 @@ public class TransactionMap {
     public static Transaction mapRequest(TransactionRequest request) {
         Transaction transaction = new Transaction();
         transaction.setAmount(request.getAmount());
-        transaction.setType(request.getType());
+       // transaction.setType(request.getType());
         transaction.setTransactionReference(request.getTransactionReference());
 
         return transaction;

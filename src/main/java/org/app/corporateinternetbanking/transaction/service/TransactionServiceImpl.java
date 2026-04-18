@@ -55,7 +55,8 @@ public class TransactionServiceImpl implements TransactionService {
     LedgerService ledgerService;
 
     @Override
-    public TransactionResponse initiateTransaction(TransactionRequest request) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess, DuplicateTransaction, InsufficientBalance {
+    public TransactionResponse initiateInternalTransaction(TransactionRequest request) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess, DuplicateTransaction, InsufficientBalance {
+
         Optional<Transaction> existingTransaction = transactionRepository.findByTransactionReference(request.getTransactionReference());
 
         if (existingTransaction.isPresent()) {
@@ -79,6 +80,7 @@ public class TransactionServiceImpl implements TransactionService {
             throw new InvalidAmount("depositAmount must not be less than zero");
         }
         Transaction transaction = mapRequest(request);
+        transaction.setType(TransactionType.INTERNAL_TRANSFER);
         transaction.setCreatedBy(user);
 
         Account sourceAccount = accountRepository.findByAccountNumber(request.getSourceAccount())
@@ -100,7 +102,7 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     @Override
-    public ApprovalResponse approval(ApprovalRequest request) throws TransactionAlreadyProcessed, TransactionDoesNotExist, InvalidStatus, UnsupportedTransactionType, UserNotFound, UnauthorizedAccess, InvalidAmount, AccountDoesNotExist, CurrencyNotFound, InsufficientBalance {
+    public ApprovalResponse approveInternalTransaction(ApprovalRequest request) throws TransactionAlreadyProcessed, TransactionDoesNotExist, InvalidStatus, UnsupportedTransactionType, UserNotFound, UnauthorizedAccess, InvalidAmount, AccountDoesNotExist, CurrencyNotFound, InsufficientBalance {
         Transaction transaction = transactionRepository.findById(request.getTransactionId())
                 .orElseThrow(() -> new TransactionDoesNotExist("This transaction does not exist"));
         User user = userRepository.findById(request.getApproverId())
@@ -122,19 +124,10 @@ public class TransactionServiceImpl implements TransactionService {
         }
         transaction.setProcessedAt(LocalDateTime.now());
         mapApprovalRequest(request);
-        processTransaction(transaction, TransactionType.INTERNAL_TRANSFER);
-        return mapApprovalResponse(transaction);
+       processInternalTransfer(transaction);
+            return mapApprovalResponse(transaction);
     }
 
-    private void processTransaction(Transaction transaction, TransactionType type) throws CurrencyNotFound {
-
-    }
-
-    private void processExternalPayout() {
-    }
-
-    private void processExternalFunding() {
-    }
 
     private ApprovalResponse processInternalTransfer(Transaction transaction) throws CurrencyNotFound {
         Account source = transaction.getSourceAccount();

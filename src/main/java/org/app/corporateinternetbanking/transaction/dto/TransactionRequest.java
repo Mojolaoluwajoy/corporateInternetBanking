@@ -11,7 +11,7 @@ public class TransactionRequest {
     private String sourceAccount;
     private String destinationAccount;
     private BigDecimal amount;
-    private TransactionType type;
+   // private TransactionType type;
     private String transactionReference;
 private Long creatorId;
 
