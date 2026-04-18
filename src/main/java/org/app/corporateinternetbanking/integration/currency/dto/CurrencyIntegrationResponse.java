@@ -1,4 +1,4 @@
-package org.app.corporateinternetbanking.integration.dto;
+package org.app.corporateinternetbanking.integration.currency.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

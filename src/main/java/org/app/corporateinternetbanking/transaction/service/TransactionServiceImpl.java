@@ -6,7 +6,7 @@ import org.app.corporateinternetbanking.account.domain.entity.Account;
 import org.app.corporateinternetbanking.account.domain.repository.AccountRepository;
 import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
-import org.app.corporateinternetbanking.integration.CurrencyExchangeService;
+import org.app.corporateinternetbanking.integration.currency.CurrencyExchangeService;
 import org.app.corporateinternetbanking.ledger.enums.EntryType;
 import org.app.corporateinternetbanking.ledger.service.LedgerService;
 import org.app.corporateinternetbanking.transaction.domain.entity.Transaction;
