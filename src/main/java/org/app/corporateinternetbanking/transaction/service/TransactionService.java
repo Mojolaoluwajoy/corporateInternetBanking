@@ -1,11 +1,12 @@
 package org.app.corporateinternetbanking.transaction.service;
 
 import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
+import org.app.corporateinternetbanking.account.exception.InvalidAccount;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
 import org.app.corporateinternetbanking.transaction.domain.entity.Transaction;
 import org.app.corporateinternetbanking.transaction.dto.ApprovalRequest;
 import org.app.corporateinternetbanking.transaction.dto.ApprovalResponse;
-import org.app.corporateinternetbanking.transaction.dto.TransactionRequest;
+import org.app.corporateinternetbanking.transaction.dto.TransferRequest;
 import org.app.corporateinternetbanking.transaction.dto.TransactionResponse;
 import org.app.corporateinternetbanking.transaction.exceptions.*;
 import org.app.corporateinternetbanking.user.exceptions.UnauthorizedAccess;
@@ -17,9 +18,8 @@ import java.util.List;
 
 public interface TransactionService {
 
-    TransactionResponse initiateInternalTransaction(TransactionRequest request) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess, DuplicateTransaction, InsufficientBalance;
+    TransactionResponse initiateTransaction(TransferRequest request) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess, DuplicateTransaction, InsufficientBalance, InvalidAccount, IsNull;
 
-    ApprovalResponse approveInternalTransaction(ApprovalRequest request) throws TransactionAlreadyProcessed, TransactionDoesNotExist, InvalidStatus, UnsupportedTransactionType, UserNotFound, UnauthorizedAccess, InvalidAmount, AccountDoesNotExist, CurrencyNotFound, InsufficientBalance;
 
     List<TransactionResponse> viewPendingTransactions() throws NoPendingTransactionFound;
 
@@ -29,4 +29,8 @@ public interface TransactionService {
     void expirePendingTransactions();
 
     BigDecimal calculateTransactionVolume();
+
+    void markSuccess(String reference) throws TransactionDoesNotExist;
+
+    void markFailed(String reference) throws TransactionDoesNotExist;
 }

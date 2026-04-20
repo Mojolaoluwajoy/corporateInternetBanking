@@ -22,7 +22,7 @@ public class Transaction {
     private BigDecimal convertedAmount;
     private BigDecimal exchangeRate;
     @Enumerated(EnumType.STRING)
-    private TransactionStatus status = TransactionStatus.PENDING;
+    private TransactionStatus status;
     @Enumerated(EnumType.STRING)
     private TransactionType type;
     @ManyToOne
@@ -32,8 +32,8 @@ public class Transaction {
     @JoinColumn(name = "destination_account")
     private Account destinationAccount;
     @Column(unique = true)
-    private String transactionReference;
-    private String providerReference;
+    private String idempotencyKey;
+    private String reference;
     @ManyToOne
     @JoinColumn(name = "created_by")
     private User createdBy;
@@ -42,6 +42,7 @@ public class Transaction {
     @JoinColumn(name = "processed_by")
     private User processedBy;
     private LocalDateTime processedAt;
-
+@ManyToOne
+    private PayoutRecipient payoutRecipient;
 
 }

@@ -10,7 +10,7 @@ import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
 import org.app.corporateinternetbanking.commons.response.GenericResponse;
 import org.app.corporateinternetbanking.transaction.dto.ApprovalRequest;
 import org.app.corporateinternetbanking.transaction.dto.ApprovalResponse;
-import org.app.corporateinternetbanking.transaction.dto.TransactionRequest;
+import org.app.corporateinternetbanking.transaction.dto.TransferRequest;
 import org.app.corporateinternetbanking.transaction.dto.TransactionResponse;
 import org.app.corporateinternetbanking.transaction.exceptions.*;
 import org.app.corporateinternetbanking.transaction.service.TransactionServiceImpl;
@@ -33,9 +33,9 @@ public class TransactionController {
 
     @Operation(summary = "Initiate transaction")
     @PostMapping("/initiate")
-    public ResponseEntity<GenericResponse> initiateTransaction(@RequestBody TransactionRequest request, HttpServletRequest servletRequest) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess, DuplicateTransaction, InsufficientBalance {
+    public ResponseEntity<GenericResponse> initiateTransaction(@RequestBody TransferRequest request, HttpServletRequest servletRequest) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess, DuplicateTransaction, InsufficientBalance {
         log.info("URI: "+servletRequest.getRequestURI());
-        TransactionResponse response= service.initiateInternalTransaction(request);
+        TransactionResponse response= service.initiateTransaction(request);
         return new ResponseEntity<>(GenericResponse.success(response,"Transaction successfully initiated...waiting for approval"), HttpStatus.OK);
     }
     @Operation(summary = "Approve transaction")

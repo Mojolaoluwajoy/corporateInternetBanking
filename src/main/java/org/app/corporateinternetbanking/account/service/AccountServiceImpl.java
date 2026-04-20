@@ -16,6 +16,7 @@ import org.app.corporateinternetbanking.organization.domain.entity.Organization;
 import org.app.corporateinternetbanking.organization.domain.repository.OrganizationRepository;
 import org.app.corporateinternetbanking.organization.exceptions.OrganizationDoesNotExist;
 import org.app.corporateinternetbanking.transaction.exceptions.InsufficientBalance;
+import org.app.corporateinternetbanking.transaction.exceptions.IsNull;
 import org.app.corporateinternetbanking.user.domain.entity.User;
 import org.app.corporateinternetbanking.user.domain.repository.UserRepository;
 import org.app.corporateinternetbanking.user.dto.UserIdDto;
@@ -94,6 +95,7 @@ public class AccountServiceImpl implements AccountService {
     public void credit(Long accountId, BigDecimal amount) throws AccountDoesNotExist {
         Account  account=repository.findById(accountId).orElseThrow(()-> new AccountDoesNotExist("Account not found"));
 
+        account.setAvailableBalance(account.getAvailableBalance().subtract(amount));
         account.setTotalBalance(account.getTotalBalance().add(amount));
         repository.save(account);
     }
@@ -105,8 +107,17 @@ public class AccountServiceImpl implements AccountService {
         if (account.getTotalBalance().compareTo(amount) < 0) {
             throw new InsufficientBalance("Insufficient funds");
         }
+        account.setAvailableBalance(account.getAvailableBalance().subtract(amount));
         account.setTotalBalance(account.getTotalBalance().subtract(amount));
         repository.save(account);
+    }
+
+    @Override
+    public Account getValidAccount(String accountNumber) throws AccountDoesNotExist, IsNull {
+        if (accountNumber==null || accountNumber.isBlank()) {
+            throw new IsNull( "Account number is required");
+        }
+        return repository.findByAccountNumber(accountNumber).orElseThrow(()-> new AccountDoesNotExist("Account not found"));
     }
 
 

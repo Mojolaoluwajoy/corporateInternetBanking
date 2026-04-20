@@ -2,6 +2,7 @@ package org.app.corporateinternetbanking.commons.exception.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
+import org.app.corporateinternetbanking.account.exception.InvalidAccount;
 import org.app.corporateinternetbanking.commons.response.GenericResponse;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotActive;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
@@ -156,6 +157,18 @@ public class GlobalExceptionHandler {
 @ExceptionHandler(InvalidSignature.class)
     public ResponseEntity<GenericResponse> handleInvalidSignature(InvalidSignature exception) {
         log.error("Invalid signature: {}", exception.getMessage());
+        return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+@ExceptionHandler(InvalidAccount.class)
+    public ResponseEntity<GenericResponse> handleInvalidAccount(InvalidAccount exception) {
+        log.error("Invalid account: {}", exception.getMessage());
+        return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+@ExceptionHandler(IsNull.class)
+    public ResponseEntity<GenericResponse> handleIsNull(IsNull exception) {
+        log.error("Is null: {}", exception.getMessage());
         return new ResponseEntity<>(GenericResponse.failed(exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
 

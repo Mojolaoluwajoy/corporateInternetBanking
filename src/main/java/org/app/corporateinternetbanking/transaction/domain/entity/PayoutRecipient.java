@@ -1,18 +1,20 @@
 package org.app.corporateinternetbanking.transaction.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Setter
+@Getter
 public class PayoutRecipient {
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private Long userId;
 
     @Column(nullable = false,length = 20)
     private String accountNumber;

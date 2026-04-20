@@ -1,10 +1,12 @@
 package org.app.corporateinternetbanking.transaction.service;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
+import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
+import org.app.corporateinternetbanking.account.service.AccountService;
 import org.app.corporateinternetbanking.transaction.domain.entity.Transaction;
 import org.app.corporateinternetbanking.transaction.domain.repository.TransactionRepository;
 import org.app.corporateinternetbanking.transaction.enums.TransactionStatus;
 import org.app.corporateinternetbanking.transaction.exceptions.InvalidSignature;
+import org.app.corporateinternetbanking.transaction.exceptions.TransactionDoesNotExist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,41 +24,29 @@ public class WebhookPaymentService {
     TransactionRepository transactionRepository;
 
     @Autowired
-    private WalletService walletService;
+    private AccountService accountService;
 
-    public void handleWebhook(String payload,String signature) throws InvalidSignature {
+    public void handleWebhook(String payload) throws InvalidSignature, AccountDoesNotExist, TransactionDoesNotExist {
 
-        if (!isValid(payload,signature)){
-            throw new InvalidSignature("Invalid signature");
-        }
-
-        JSONObject json = new JSONObject(payload);
+        JSON json = new JSONObject(payload);
           String event=json.getString("event");
 
           JSONObject data=json.getJSONObject("data");
           String reference=data.getString("reference");
 
-        Transaction txn=transactionRepository.findByTransactionReference(reference).orElseThrow(()->new InvalidSignature("Invalid transaction reference"));
+        Transaction txn=transactionRepository.findByIdempotencyKey(reference).orElseThrow(()->new InvalidSignature("Invalid transaction reference"));
 
    if (txn.getStatus()== TransactionStatus.SUCCESS)return;
 
    if ("charge.success".equals(event)){
-       walletService.credit(txn.getAmount());
-       tr
-
+       accountService.credit(txn.getDestinationAccount().getId(),txn.getAmount());
+       transactionService.markSuccess(reference);
        }
-
+   if ("charge.failed".equals(event)){
+       accountService.credit(txn.getSourceAccount().getId(),txn.getAmount());
+       transactionService.markFailed(reference);
    }
 
-    }
-
-    private boolean isValid(String payload, String signature) {
-        try {
-
-        }catch (Exception e){
-
-            return false;
-        }
-    }
+   }
 
 }

@@ -18,7 +18,7 @@ public class ApprovalResponse {
     private BigDecimal convertedAmount;
     private BigDecimal exchangeRate;
     private TransactionType type;
-private TransactionStatus status;
-private UserIdDto approver;
-private LocalDateTime approvedAt;
+    private TransactionStatus status;
+    private UserIdDto approver;
+    private LocalDateTime approvedAt;
 }
