@@ -7,9 +7,10 @@ import lombok.Setter;
 @Getter
 public class PaystackWebhookRequest {
     private String event;
-    private String data;
+    private Data data;
 
-
+@Setter
+@Getter
     public static class Data{
          private String reference;
          private  String status;

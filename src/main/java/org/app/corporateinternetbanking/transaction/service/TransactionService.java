@@ -33,4 +33,5 @@ public interface TransactionService {
     void markSuccess(String reference) throws TransactionDoesNotExist;
 
     void markFailed(String reference) throws TransactionDoesNotExist;
+    Transaction findByTransactionReference(String transactionReference) throws TransactionDoesNotExist;
 }

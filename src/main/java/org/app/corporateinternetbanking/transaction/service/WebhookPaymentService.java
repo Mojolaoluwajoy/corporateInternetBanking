@@ -4,6 +4,7 @@ import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
 import org.app.corporateinternetbanking.account.service.AccountService;
 import org.app.corporateinternetbanking.transaction.domain.entity.Transaction;
 import org.app.corporateinternetbanking.transaction.domain.repository.TransactionRepository;
+import org.app.corporateinternetbanking.transaction.dto.PaystackWebhookRequest;
 import org.app.corporateinternetbanking.transaction.enums.TransactionStatus;
 import org.app.corporateinternetbanking.transaction.exceptions.InvalidSignature;
 import org.app.corporateinternetbanking.transaction.exceptions.TransactionDoesNotExist;
@@ -26,23 +27,19 @@ public class WebhookPaymentService {
     @Autowired
     private AccountService accountService;
 
-    public void handleWebhook(String payload) throws InvalidSignature, AccountDoesNotExist, TransactionDoesNotExist {
+    public void handleWebhook(PaystackWebhookRequest webhookRequest) throws InvalidSignature, AccountDoesNotExist, TransactionDoesNotExist {
 
-        JSON json = new JSONObject(payload);
-          String event=json.getString("event");
+               String reference=webhookRequest.getData().getReference();
 
-          JSONObject data=json.getJSONObject("data");
-          String reference=data.getString("reference");
-
-        Transaction txn=transactionRepository.findByIdempotencyKey(reference).orElseThrow(()->new InvalidSignature("Invalid transaction reference"));
+        Transaction txn=transactionService.findByTransactionReference(reference);
 
    if (txn.getStatus()== TransactionStatus.SUCCESS)return;
 
-   if ("charge.success".equals(event)){
+   if ("charge.success".equals(webhookRequest.getEvent())){
        accountService.credit(txn.getDestinationAccount().getId(),txn.getAmount());
        transactionService.markSuccess(reference);
        }
-   if ("charge.failed".equals(event)){
+   if ("charge.failed".equals(webhookRequest.getEvent())){
        accountService.credit(txn.getSourceAccount().getId(),txn.getAmount());
        transactionService.markFailed(reference);
    }
