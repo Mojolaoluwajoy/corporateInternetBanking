@@ -39,7 +39,9 @@ public class SecurityConfiguration {
                 "/v3/api-docs/**",
                 "/v3/api-docs",
                 "/webjars/**",
-                "/swagger-resources/**"};
+                "/swagger-resources/**",
+                "/external/transaction/fund",
+                "/webhook/handleWebhook",};
         httpSecurity.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(publicEndPoints)
@@ -52,6 +54,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/transactions/approve").hasRole(UserRole.APPROVER.name())
                         .requestMatchers("/transactions/pending").hasAnyRole(UserRole.APPROVER.name(), UserRole.ADMIN.name())
                         .requestMatchers("/currencies/status/").hasRole(UserRole.SUPER_ADMIN.name())
+                        .requestMatchers("/external/transaction/payout/").hasRole(UserRole.MAKER.name())
                         .requestMatchers("/auth/password/reset").authenticated()
                         .anyRequest().authenticated()).sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
