@@ -11,8 +11,8 @@ import org.app.corporateinternetbanking.transaction.service.ApprovalService;
 import org.app.corporateinternetbanking.user.exceptions.UserNotFound;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
 import org.app.corporateinternetbanking.commons.response.GenericResponse;
-import org.app.corporateinternetbanking.transaction.dto.ApprovalRequest;
-import org.app.corporateinternetbanking.transaction.dto.ApprovalResponse;
+import org.app.corporateinternetbanking.transaction.dto.TransactionApprovalRequest;
+import org.app.corporateinternetbanking.transaction.dto.TransactionApprovalResponse;
 import org.app.corporateinternetbanking.transaction.dto.TransferRequest;
 import org.app.corporateinternetbanking.transaction.dto.TransactionResponse;
 import org.app.corporateinternetbanking.transaction.exceptions.*;
@@ -45,8 +45,8 @@ public class TransactionController {
     }
     @Operation(summary = "Approve transaction")
     @PostMapping("/approve")
-    public ResponseEntity <GenericResponse> grantApproval(@RequestBody ApprovalRequest request) throws TransactionAlreadyProcessed, TransactionDoesNotExist, InvalidStatus, UnsupportedTransactionType, UserNotFound, UnauthorizedAccess, InvalidAmount, AccountDoesNotExist, CurrencyNotFound, InsufficientBalance, IsNull {
-        ApprovalResponse response= approvalService.approveInternalTransaction(request);
+    public ResponseEntity <GenericResponse> grantApproval(@RequestBody TransactionApprovalRequest request) throws TransactionAlreadyProcessed, TransactionDoesNotExist, InvalidStatus, UnsupportedTransactionType, UserNotFound, UnauthorizedAccess, InvalidAmount, AccountDoesNotExist, CurrencyNotFound, InsufficientBalance, IsNull {
+        TransactionApprovalResponse response= approvalService.approveInternalTransaction(request);
         return new ResponseEntity<>(GenericResponse.success(response,"Transaction Processed"),HttpStatus.OK);
     }
     @Operation(summary = "View all pending transactions")

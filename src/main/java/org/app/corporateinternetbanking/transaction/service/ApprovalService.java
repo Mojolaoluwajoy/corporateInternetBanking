@@ -5,15 +5,14 @@ import org.app.corporateinternetbanking.account.domain.entity.Account;
 import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
 import org.app.corporateinternetbanking.account.service.AccountService;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
-import org.app.corporateinternetbanking.currency.service.CurrencyService;
 import org.app.corporateinternetbanking.integration.currency.CurrencyExchangeService;
 import org.app.corporateinternetbanking.integration.paystack.PayStackClient;
 import org.app.corporateinternetbanking.ledger.enums.EntryType;
 import org.app.corporateinternetbanking.ledger.service.LedgerService;
 import org.app.corporateinternetbanking.transaction.domain.entity.Transaction;
 import org.app.corporateinternetbanking.transaction.domain.repository.TransactionRepository;
-import org.app.corporateinternetbanking.transaction.dto.ApprovalRequest;
-import org.app.corporateinternetbanking.transaction.dto.ApprovalResponse;
+import org.app.corporateinternetbanking.transaction.dto.TransactionApprovalRequest;
+import org.app.corporateinternetbanking.transaction.dto.TransactionApprovalResponse;
 import org.app.corporateinternetbanking.transaction.enums.TransactionStatus;
 import org.app.corporateinternetbanking.transaction.enums.TransactionType;
 import org.app.corporateinternetbanking.transaction.exceptions.*;
@@ -43,7 +42,7 @@ public class ApprovalService {
     private final AccountService accountService;
     private final PayStackClient payStackClient;
 
-    public ApprovalResponse approveInternalTransaction(ApprovalRequest request) throws TransactionAlreadyProcessed, TransactionDoesNotExist, InvalidStatus, UnsupportedTransactionType, UserNotFound, UnauthorizedAccess, InvalidAmount, AccountDoesNotExist, CurrencyNotFound, InsufficientBalance, IsNull {
+    public TransactionApprovalResponse approveInternalTransaction(TransactionApprovalRequest request) throws TransactionAlreadyProcessed, TransactionDoesNotExist, InvalidStatus, UnsupportedTransactionType, UserNotFound, UnauthorizedAccess, InvalidAmount, AccountDoesNotExist, CurrencyNotFound, InsufficientBalance, IsNull {
         Transaction transaction = transactionRepository.findById(request.getTransactionId())
                 .orElseThrow(() -> new TransactionDoesNotExist("This transaction does not exist"));
         User user = userRepository.findById(request.getApproverId())

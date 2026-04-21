@@ -2,10 +2,7 @@ package org.app.corporateinternetbanking.transaction.service;
 
 import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
 import org.app.corporateinternetbanking.account.exception.InvalidAccount;
-import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
 import org.app.corporateinternetbanking.transaction.domain.entity.Transaction;
-import org.app.corporateinternetbanking.transaction.dto.ApprovalRequest;
-import org.app.corporateinternetbanking.transaction.dto.ApprovalResponse;
 import org.app.corporateinternetbanking.transaction.dto.TransferRequest;
 import org.app.corporateinternetbanking.transaction.dto.TransactionResponse;
 import org.app.corporateinternetbanking.transaction.exceptions.*;

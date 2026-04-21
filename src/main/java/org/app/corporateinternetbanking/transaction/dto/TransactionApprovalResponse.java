@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Setter
 @Getter
-public class ApprovalResponse {
+public class TransactionApprovalResponse {
     private AccountNumberDto sourceAccount;
     private BigDecimal amount;
     private BigDecimal convertedAmount;

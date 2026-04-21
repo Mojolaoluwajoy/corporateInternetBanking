@@ -6,18 +6,11 @@ import org.app.corporateinternetbanking.account.domain.entity.Account;
 import org.app.corporateinternetbanking.account.domain.repository.AccountRepository;
 import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
 import org.app.corporateinternetbanking.account.exception.InvalidAccount;
-import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
-import org.app.corporateinternetbanking.integration.currency.CurrencyExchangeService;
-import org.app.corporateinternetbanking.ledger.enums.EntryType;
-import org.app.corporateinternetbanking.ledger.service.LedgerService;
 import org.app.corporateinternetbanking.transaction.domain.entity.Transaction;
 import org.app.corporateinternetbanking.transaction.domain.repository.TransactionRepository;
-import org.app.corporateinternetbanking.transaction.dto.ApprovalRequest;
-import org.app.corporateinternetbanking.transaction.dto.ApprovalResponse;
 import org.app.corporateinternetbanking.transaction.dto.TransferRequest;
 import org.app.corporateinternetbanking.transaction.dto.TransactionResponse;
 import org.app.corporateinternetbanking.transaction.enums.TransactionStatus;
-import org.app.corporateinternetbanking.transaction.enums.TransactionType;
 import org.app.corporateinternetbanking.transaction.exceptions.*;
 import org.app.corporateinternetbanking.transaction.utils.mapper.TransactionMap;
 import org.app.corporateinternetbanking.user.domain.entity.User;
@@ -36,8 +29,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.app.corporateinternetbanking.transaction.utils.mapper.ApprovalMap.mapApprovalRequest;
-import static org.app.corporateinternetbanking.transaction.utils.mapper.ApprovalMap.mapApprovalResponse;
 import static org.app.corporateinternetbanking.transaction.utils.mapper.TransactionMap.mapRequest;
 import static org.app.corporateinternetbanking.transaction.utils.mapper.TransactionMap.mapResponse;
 

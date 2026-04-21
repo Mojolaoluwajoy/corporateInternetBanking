@@ -53,7 +53,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    public ApprovalResponse processOrganizationRegistration(ApprovalRequest approvalRequest) throws OrganizationDoesNotExist, OrganizationAlreadyProcessed, UserNotFound {
+    public OrganizationApprovalResponse processOrganizationRegistration(OrganizationApprovalRequest approvalRequest) throws OrganizationDoesNotExist, OrganizationAlreadyProcessed, UserNotFound {
         Organization organization = repository.findById(approvalRequest.getOrganizationId())
                 .orElseThrow(() -> new OrganizationDoesNotExist("Organization does not exist"));
 

@@ -5,7 +5,7 @@ import lombok.Setter;
 import org.app.corporateinternetbanking.transaction.enums.TransactionStatus;
 @Setter
 @Getter
-public class ApprovalRequest {
+public class TransactionApprovalRequest {
     private long transactionId;
     private TransactionStatus status;
     private Long approverId;

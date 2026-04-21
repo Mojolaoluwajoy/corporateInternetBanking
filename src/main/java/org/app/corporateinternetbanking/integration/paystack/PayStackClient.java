@@ -8,8 +8,7 @@ import java.util.Map;
 
 @FeignClient(
         name = "payStackClient",
-        url = "https://api.paystack.com",
-        configuration=FeignConfiguration.class)
+        url = "https://api.paystack.com")
 
 public interface PayStackClient {
 

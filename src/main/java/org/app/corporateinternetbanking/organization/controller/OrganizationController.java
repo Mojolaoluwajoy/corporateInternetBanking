@@ -33,8 +33,8 @@ public class OrganizationController {
 
     @Operation(summary = "Approve organization and admin registration request")
     @PostMapping("/approve")
-    public ResponseEntity<GenericResponse> approveOrganization(@RequestBody ApprovalRequest request) throws UserAlreadyRegistered, UserNotFound, OrganizationAlreadyProcessed, OrganizationDoesNotExist {
-        ApprovalResponse response = service.processOrganizationRegistration(request);
+    public ResponseEntity<GenericResponse> approveOrganization(@RequestBody OrganizationApprovalRequest request) throws UserAlreadyRegistered, UserNotFound, OrganizationAlreadyProcessed, OrganizationDoesNotExist {
+        OrganizationApprovalResponse response = service.processOrganizationRegistration(request);
         return new ResponseEntity<>(GenericResponse.success(response, "Organization successfully processed"), HttpStatus.OK);
     }
 

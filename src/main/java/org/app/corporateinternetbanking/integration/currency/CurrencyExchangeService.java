@@ -1,5 +1,6 @@
 package org.app.corporateinternetbanking.integration.currency;
 
+import lombok.RequiredArgsConstructor;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
 import org.app.corporateinternetbanking.integration.currency.dto.CurrencyIntegrationResponse;
 import org.app.corporateinternetbanking.integration.currency.mapper.CurrencyMapper;
@@ -9,10 +10,10 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 
 @Service
+@RequiredArgsConstructor
 public class CurrencyExchangeService {
 
-    @Autowired
-    private CurrencyClient currencyClient;
+    private final CurrencyClient currencyClient;
 
 
     public BigDecimal getRate(String base, String target) throws CurrencyNotFound {

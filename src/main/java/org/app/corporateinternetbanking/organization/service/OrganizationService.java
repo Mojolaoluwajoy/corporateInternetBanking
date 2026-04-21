@@ -17,5 +17,5 @@ public interface OrganizationService {
 
     OrganizationOnlyResponse viewById(long id) throws OrganizationDoesNotExist;
 
-    ApprovalResponse processOrganizationRegistration(ApprovalRequest approvalRequest) throws OrganizationDoesNotExist, OrganizationAlreadyProcessed, UserNotFound;
+    OrganizationApprovalResponse processOrganizationRegistration(OrganizationApprovalRequest approvalRequest) throws OrganizationDoesNotExist, OrganizationAlreadyProcessed, UserNotFound;
 }

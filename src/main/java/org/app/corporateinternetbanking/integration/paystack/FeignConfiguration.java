@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FeignConfiguration {
 
-    @Value("${paystack.secret.kewy}")
+    @Value("${paystack.secret.key}")
     private String secretKey;
 
     @Bean

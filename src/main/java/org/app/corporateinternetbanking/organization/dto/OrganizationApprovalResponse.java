@@ -7,10 +7,9 @@ import org.app.corporateinternetbanking.user.enums.UserStatus;
 
 @Setter
 @Getter
-public class ApprovalRequest {
-    private Long organizationId;
-    private Long adminId;
-    private OrganizationStatus organizationStatus;
+public class OrganizationApprovalResponse {
+    private String organizationName;
+    private String adminName;
+        private OrganizationStatus organizationStatus;
     private UserStatus userStatus;
-
 }
