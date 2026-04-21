@@ -22,7 +22,7 @@ public class WebhookController {
 
     @PostMapping("/paystack")
     public ResponseEntity<GenericResponse> handleWebhook(@RequestBody PaystackWebhookRequest webhookRequest) throws TransactionDoesNotExist, AccountDoesNotExist, InvalidSignature {
-        return new ResponseEntity<>(GenericResponse.success(webhookPaymentService.handleWebhook(webhookRequest),"Received"), HttpStatus.OK)
+        return new ResponseEntity<>(GenericResponse.success(webhookPaymentService.handleWebhook(webhookRequest),"Received"), HttpStatus.OK);
     }
 
 }

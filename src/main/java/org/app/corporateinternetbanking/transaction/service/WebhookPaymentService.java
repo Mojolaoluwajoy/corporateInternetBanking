@@ -27,23 +27,23 @@ public class WebhookPaymentService {
     @Autowired
     private AccountService accountService;
 
-    public void handleWebhook(PaystackWebhookRequest webhookRequest) throws InvalidSignature, AccountDoesNotExist, TransactionDoesNotExist {
+    public String handleWebhook(PaystackWebhookRequest webhookRequest) throws AccountDoesNotExist, TransactionDoesNotExist {
 
                String reference=webhookRequest.getData().getReference();
-
+               String event=webhookRequest.getEvent();
         Transaction txn=transactionService.findByTransactionReference(reference);
 
-   if (txn.getStatus()== TransactionStatus.SUCCESS)return;
 
-   if ("charge.success".equals(webhookRequest.getEvent())){
+   if ("charge.success".equals(event)){
        accountService.credit(txn.getDestinationAccount().getId(),txn.getAmount());
        transactionService.markSuccess(reference);
-       }
-   if ("charge.failed".equals(webhookRequest.getEvent())){
+       } else if ("transfer.success".equals(event)) {
+      transactionService.markSuccess(reference);  }
+        if ("transfer.failed".equals(webhookRequest.getEvent())){
        accountService.credit(txn.getSourceAccount().getId(),txn.getAmount());
        transactionService.markFailed(reference);
    }
-
+return reference;
    }
 
 }
