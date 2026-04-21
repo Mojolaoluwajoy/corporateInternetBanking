@@ -1,0 +1,47 @@
+package org.app.corporateinternetbanking.transaction.controller;
+
+import lombok.RequiredArgsConstructor;
+import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
+import org.app.corporateinternetbanking.account.exception.InvalidAccount;
+import org.app.corporateinternetbanking.commons.response.GenericResponse;
+import org.app.corporateinternetbanking.transaction.dto.FundRequest;
+import org.app.corporateinternetbanking.transaction.dto.PayoutRequest;
+import org.app.corporateinternetbanking.transaction.exceptions.DuplicateTransaction;
+import org.app.corporateinternetbanking.transaction.exceptions.InsufficientBalance;
+import org.app.corporateinternetbanking.transaction.exceptions.InvalidAmount;
+import org.app.corporateinternetbanking.transaction.exceptions.IsNull;
+import org.app.corporateinternetbanking.transaction.service.PaymentService;
+import org.app.corporateinternetbanking.transaction.service.RecipientService;
+import org.app.corporateinternetbanking.user.exceptions.UnauthorizedAccess;
+import org.app.corporateinternetbanking.user.exceptions.UserNotFound;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/external/transaction")
+@RequiredArgsConstructor
+public class ExternalTransactionController {
+    private final PaymentService paymentService;
+    private final RecipientService recipientService;
+
+    @PostMapping("/fund")
+    public ResponseEntity<GenericResponse> fund(@RequestBody FundRequest fundRequest) throws UserNotFound, InvalidAccount, InvalidAmount, InsufficientBalance, UnauthorizedAccess, IsNull, DuplicateTransaction, AccountDoesNotExist {
+
+        Map<String,Object> map=paymentService.initializeFunding(fundRequest);
+
+        return new ResponseEntity<>(GenericResponse.success(map,"funding initiated and awaiting response"), HttpStatus.OK);
+    }
+
+
+    @PostMapping("/payout")
+    public ResponseEntity<GenericResponse> payout(@RequestBody PayoutRequest payoutRequest) throws UserNotFound, InvalidAccount, InvalidAmount, InsufficientBalance, UnauthorizedAccess, IsNull, DuplicateTransaction, AccountDoesNotExist {
+        return new ResponseEntity<>(GenericResponse.success(recipientService.requestPayOut(payoutRequest),"payment request initialized and awaiting approval"),HttpStatus.OK);
+    }
+}

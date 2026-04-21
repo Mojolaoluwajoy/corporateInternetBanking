@@ -7,6 +7,7 @@ import org.app.corporateinternetbanking.integration.paystack.PayStackClient;
 import org.app.corporateinternetbanking.transaction.domain.entity.PayoutRecipient;
 import org.app.corporateinternetbanking.transaction.domain.repository.PayoutRecipientRepository;
 import org.app.corporateinternetbanking.transaction.dto.PayoutRequest;
+import org.app.corporateinternetbanking.transaction.dto.TransactionResponse;
 import org.app.corporateinternetbanking.transaction.dto.TransferRequest;
 import org.app.corporateinternetbanking.transaction.exceptions.DuplicateTransaction;
 import org.app.corporateinternetbanking.transaction.exceptions.InsufficientBalance;
@@ -33,11 +34,12 @@ public class RecipientService {
 
 
 
-    public void requestPayOut(PayoutRequest payoutRequest) throws UserNotFound, InvalidAccount, InvalidAmount, InsufficientBalance, UnauthorizedAccess, IsNull, DuplicateTransaction, AccountDoesNotExist {
+    public TransactionResponse requestPayOut(PayoutRequest payoutRequest) throws UserNotFound, InvalidAccount, InvalidAmount, InsufficientBalance, UnauthorizedAccess, IsNull, DuplicateTransaction, AccountDoesNotExist {
 
         PayoutRecipient recipient=createOrFetch(payoutRequest);
         TransferRequest transferRequest=mapToPayoutRequest(payoutRequest);
-        transactionService.initiateTransaction(transferRequest);
+       return transactionService.initiateTransaction(transferRequest);
+
     }
 
 

@@ -3,8 +3,11 @@ package org.app.corporateinternetbanking.transaction.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
+import org.app.corporateinternetbanking.account.exception.InvalidAccount;
+import org.app.corporateinternetbanking.transaction.service.ApprovalService;
 import org.app.corporateinternetbanking.user.exceptions.UserNotFound;
 import org.app.corporateinternetbanking.currency.exceptions.CurrencyNotFound;
 import org.app.corporateinternetbanking.commons.response.GenericResponse;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 @Slf4j
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/transactions")
 @Tag(name= "Transactions API",description = "Handles transactions")
@@ -30,18 +34,19 @@ import java.util.List;
 public class TransactionController {
     @Autowired
     TransactionServiceImpl service;
+    private final ApprovalService approvalService;
 
     @Operation(summary = "Initiate transaction")
     @PostMapping("/initiate")
-    public ResponseEntity<GenericResponse> initiateTransaction(@RequestBody TransferRequest request, HttpServletRequest servletRequest) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess, DuplicateTransaction, InsufficientBalance {
+    public ResponseEntity<GenericResponse> initiateTransaction(@RequestBody TransferRequest request, HttpServletRequest servletRequest) throws InvalidAmount, AccountDoesNotExist, UserNotFound, UnauthorizedAccess, DuplicateTransaction, InsufficientBalance, InvalidAccount, IsNull {
         log.info("URI: "+servletRequest.getRequestURI());
         TransactionResponse response= service.initiateTransaction(request);
         return new ResponseEntity<>(GenericResponse.success(response,"Transaction successfully initiated...waiting for approval"), HttpStatus.OK);
     }
     @Operation(summary = "Approve transaction")
     @PostMapping("/approve")
-    public ResponseEntity <GenericResponse> grantApproval(@RequestBody ApprovalRequest request) throws TransactionAlreadyProcessed, TransactionDoesNotExist, InvalidStatus, UnsupportedTransactionType, UserNotFound, UnauthorizedAccess, InvalidAmount, AccountDoesNotExist, CurrencyNotFound, InsufficientBalance {
-        ApprovalResponse response= service.approveInternalTransaction(request);
+    public ResponseEntity <GenericResponse> grantApproval(@RequestBody ApprovalRequest request) throws TransactionAlreadyProcessed, TransactionDoesNotExist, InvalidStatus, UnsupportedTransactionType, UserNotFound, UnauthorizedAccess, InvalidAmount, AccountDoesNotExist, CurrencyNotFound, InsufficientBalance, IsNull {
+        ApprovalResponse response= approvalService.approveInternalTransaction(request);
         return new ResponseEntity<>(GenericResponse.success(response,"Transaction Processed"),HttpStatus.OK);
     }
     @Operation(summary = "View all pending transactions")
