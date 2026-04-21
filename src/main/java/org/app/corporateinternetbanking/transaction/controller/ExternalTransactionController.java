@@ -1,5 +1,7 @@
 package org.app.corporateinternetbanking.transaction.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
 import org.app.corporateinternetbanking.account.exception.InvalidAccount;
@@ -27,10 +29,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/external/transaction")
 @RequiredArgsConstructor
+@Tag(name = "External Transactions",description = "To carryout external payout and funding")
 public class ExternalTransactionController {
     private final PaymentService paymentService;
     private final RecipientService recipientService;
 
+    @Operation(summary = "It fund sthe system account from an external account(paystack")
     @PostMapping("/fund")
     public ResponseEntity<GenericResponse> fund(@RequestBody FundRequest fundRequest) throws UserNotFound, InvalidAccount, InvalidAmount, InsufficientBalance, UnauthorizedAccess, IsNull, DuplicateTransaction, AccountDoesNotExist {
 
@@ -39,7 +43,7 @@ public class ExternalTransactionController {
         return new ResponseEntity<>(GenericResponse.success(map,"funding initiated and awaiting response"), HttpStatus.OK);
     }
 
-
+@Operation(summary = "It initiates a payout from the system account to an external one")
     @PostMapping("/payout")
     public ResponseEntity<GenericResponse> payout(@RequestBody PayoutRequest payoutRequest) throws UserNotFound, InvalidAccount, InvalidAmount, InsufficientBalance, UnauthorizedAccess, IsNull, DuplicateTransaction, AccountDoesNotExist {
         return new ResponseEntity<>(GenericResponse.success(recipientService.requestPayOut(payoutRequest),"payment request initialized and awaiting approval"),HttpStatus.OK);

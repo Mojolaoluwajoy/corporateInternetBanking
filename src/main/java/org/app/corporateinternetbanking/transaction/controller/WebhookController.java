@@ -1,5 +1,7 @@
 package org.app.corporateinternetbanking.transaction.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.app.corporateinternetbanking.account.exception.AccountDoesNotExist;
 import org.app.corporateinternetbanking.commons.response.GenericResponse;
@@ -17,9 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/webhook")
 @RequiredArgsConstructor
+@Tag(name = "Webhook",description = "Handles webhook")
 public class WebhookController {
     private final WebhookPaymentService webhookPaymentService;
 
+    @Operation(summary = "It handles webhook")
     @PostMapping("/paystack")
     public ResponseEntity<GenericResponse> handleWebhook(@RequestBody PaystackWebhookRequest webhookRequest) throws TransactionDoesNotExist, AccountDoesNotExist, InvalidSignature {
         return new ResponseEntity<>(GenericResponse.success(webhookPaymentService.handleWebhook(webhookRequest),"Received"), HttpStatus.OK);

@@ -39,7 +39,7 @@ public class WebhookPaymentService {
        transactionService.markSuccess(reference);
        } else if ("transfer.success".equals(event)) {
       transactionService.markSuccess(reference);  }
-        if ("transfer.failed".equals(webhookRequest.getEvent())){
+      else if ("transfer.failed".equals(webhookRequest.getEvent())){
        accountService.credit(txn.getSourceAccount().getId(),txn.getAmount());
        transactionService.markFailed(reference);
    }
