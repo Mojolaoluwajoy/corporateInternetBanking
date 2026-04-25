@@ -10,6 +10,9 @@ import org.app.corporateinternetbanking.currency.utils.CurrencyMap;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class CurrencyServiceImpl implements CurrencyService {
@@ -29,5 +32,21 @@ public class CurrencyServiceImpl implements CurrencyService {
             repository.save(currency);
         }
         return CurrencyMap.mapCurrencyResponse(currency);
+    }
+
+    @Override
+    public List<CurrencyResponse> viewActiveCurrencies() {
+        List<Currency> currencies = repository.findByStatus(CurrencyStatus.ACTIVE);
+        List<CurrencyResponse> responseList =new ArrayList<>();
+        for (Currency currency : currencies) {
+            CurrencyResponse currencyResponse = new CurrencyResponse();
+            currencyResponse.setCode(currency.getCode());
+            currencyResponse.setName(currency.getName());
+            currencyResponse.setStatus(currency.getStatus());
+            currencyResponse.setSymbol(currency.getSymbol());
+            responseList.add(currencyResponse);
+
+                  }
+        return responseList;
     }
 }
